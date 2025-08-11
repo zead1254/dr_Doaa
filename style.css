@@ -1,0 +1,121 @@
+/* ========== base ========== */
+:root{
+  --bg:#ffffff;
+  --accent1:#ff6600; /* برتقالى */
+  --accent2:#00a86b; /* أخضر */
+  --muted:#586068;
+  --card:#ffffff;
+  --glass: rgba(255,255,255,0.06);
+  --shadow: 0 10px 30px rgba(15,20,30,0.08);
+  --radius:14px;
+  --max-width:1150px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:'Cairo', system-ui, sans-serif;background:var(--bg);color:#122;direction:rtl}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 18px}
+
+/* particles layer */
+#particles-js{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.95}
+
+/* header */
+.site-header{
+  position:relative;z-index:5;padding:22px 18px;display:flex;align-items:center;justify-content:space-between;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.15));
+  backdrop-filter: blur(6px);
+  border-bottom:1px solid rgba(0,0,0,0.04);
+}
+.owner{display:flex;align-items:center;gap:14px}
+.owner-photo{width:66px;height:66px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.12);box-shadow:0 6px 22px rgba(0,0,0,0.12)}
+.owner-info .site-title{font-size:1.15rem;margin:0;color:#0f1720}
+.owner-info .site-sub{margin:0;color:var(--muted);font-size:0.88rem}
+
+/* nav */
+.top-nav{display:flex;gap:12px;align-items:center}
+.top-nav .nav-link{color:#0f1720;text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600;transition:all .25s}
+.top-nav .nav-link:hover{background:linear-gradient(90deg, rgba(255,102,0,0.08), rgba(0,168,107,0.06));transform:translateY(-3px)}
+
+/* hero */
+.hero{position:relative;padding:70px 0 40px;overflow:visible}
+.hero-inner{display:flex;gap:40px;align-items:center;justify-content:space-between;max-width:var(--max-width);margin:0 auto;padding:0 18px;z-index:3;position:relative}
+@media (max-width:920px){ .hero-inner{flex-direction:column-reverse;text-align:center} .top-nav{display:none} }
+
+/* left text */
+.hero-text{flex:1;min-width:320px}
+.hero-title{font-size:2.05rem;color:#071024;margin:0 0 12px;letter-spacing:0.5px}
+.hero-desc{color:var(--muted);line-height:1.8}
+.hero-cta{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary, .btn-subscribe{
+  display:inline-block;padding:12px 20px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:white;text-decoration:none;font-weight:700;border:0;cursor:pointer;box-shadow:0 8px 30px rgba(10,10,10,0.12);transition:transform .25s, box-shadow .25s;
+}
+.btn-primary:hover, .btn-subscribe:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(10,10,10,0.15)}
+.btn-outline{display:inline-block;padding:10px 16px;border-radius:12px;border:2px solid rgba(0,0,0,0.06);background:transparent;color:#0f1720;text-decoration:none;font-weight:700}
+
+/* course card (right) */
+.hero-media{width:420px;max-width:46%;flex:0 0 420px}
+@media (max-width:920px){ .hero-media{max-width:90%;width:420px} }
+
+.course-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+  border-radius:18px;padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;border:1px solid rgba(10,10,10,0.03);
+  transform-origin:center;transition:transform .5s;
+}
+.course-card:hover{transform:translateY(-8px) rotate(-0.6deg)}
+.course-badge{position:absolute;left:14px;top:14px;background:rgba(0,0,0,0.06);padding:6px 10px;border-radius:10px;font-size:0.8rem;color:var(--muted)}
+.course-image{width:100%;height:240px;object-fit:cover;border-radius:12px;display:block;margin-bottom:12px;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
+.course-name{margin:0;font-size:1.05rem;color:#081426}
+.course-short{color:var(--muted);font-size:0.92rem;margin-top:6px}
+
+/* animated glow behind course image */
+.course-card::before{
+  content:"";position:absolute;inset:auto 20px 100px 20px;height:120px;border-radius:40px;filter:blur(30px);opacity:0.35;
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));transform:translateY(10px);z-index:0;
+}
+
+/* svg decorative waves */
+.decor-lines{position:absolute;left:0;right:0;bottom:-10px;height:160px;z-index:2;opacity:0.22;pointer-events:none}
+.wave{fill:none;stroke-width:2;stroke-linecap:round}
+.wave1{stroke:rgba(255,102,0,0.45);stroke-dasharray:1200;animation:dash 9s linear infinite}
+.wave2{stroke:rgba(0,168,107,0.38);stroke-dasharray:900;animation:dash 12s linear infinite reverse}
+@keyframes dash{from{stroke-dashoffset:0}to{stroke-dashoffset:-2000}}
+
+/* about */
+.about{padding:40px 0 60px}
+.about .container{max-width:900px}
+.about h3{font-size:1.2rem;color:#081426;margin-bottom:12px}
+.about p{color:var(--muted);line-height:1.8}
+.features{list-style:none;padding:0;margin-top:12px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.features li{background:rgba(0,0,0,0.03);padding:10px 14px;border-radius:10px;color:#0f1720;font-weight:600}
+
+/* subscribe section */
+.subscribe{padding:34px 0;background:linear-gradient(180deg, rgba(0,168,107,0.03), rgba(255,102,0,0.02))}
+.subscribe .narrow{max-width:700px;margin:0 auto}
+.login-form{display:grid;gap:12px;margin-top:16px;background:rgba(255,255,255,0.85);padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(10,10,10,0.06)}
+.login-form label{display:block;font-weight:700;color:#233;padding:6px 4px}
+.login-form input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);font-size:1rem}
+.form-actions{display:flex;gap:10px;justify-content:flex-start}
+.form-actions .btn-primary{padding:12px 18px}
+.login-note{font-size:0.82rem;color:var(--muted);margin-top:8px}
+
+/* footer */
+.site-footer{padding:22px 0;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;margin-top:40px;text-align:center}
+
+/* small toast */
+.app-toast{position:fixed;left:50%;transform:translateX(-50%) translateY(30px);bottom:18px;background:rgba(0,0,0,0.8);color:#fff;padding:12px 18px;border-radius:10px;z-index:999;opacity:0;transition:all .28s}
+.app-toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* page transition class (applied on html) */
+.page-leave .site-header, .page-leave .hero, .page-leave .about, .page-leave .subscribe, .page-leave .site-footer{
+  transform:translateY(15px) scale(.995);opacity:.0;transition:all .6s ease;
+}
+
+/* responsive tweaks */
+@media (max-width:720px){
+  .owner-photo{width:52px;height:52px}
+  .hero-title{font-size:1.5rem}
+  .hero-inner{gap:20px}
+  .hero-media{width:92%}
+  .course-image{height:190px}
+  .decor-lines{display:none}
+}

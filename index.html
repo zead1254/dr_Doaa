@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>كورس الدراسات النفسية - د. محمد نبيل</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- AOS for scroll animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body class="page ready">
+
+  <!-- particles canvas (background) -->
+  <div id="particles-js" aria-hidden="true"></div>
+
+  <!-- top bar / owner -->
+  <header class="site-header" data-aos="fade-down">
+    <div class="owner">
+      <img src="owner.jpg" alt="صورة صاحب الموقع" class="owner-photo">
+      <div class="owner-info">
+        <h1 class="site-title">د. محمد نبيل</h1>
+        <p class="site-sub">منصة الدراسات النفسية — خبرة احترافية وعملية</p>
+      </div>
+    </div>
+    <nav class="top-nav">
+      <a href="#about" class="nav-link">عن الكورس</a>
+      <a href="#subscribe" class="nav-link">اشترك الآن</a>
+    </nav>
+  </header>
+
+  <!-- hero -->
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-inner" data-aos="zoom-in">
+        <div class="hero-text">
+          <h2 class="hero-title">كورس متكامل في الدراسات النفسية</h2>
+          <p class="hero-desc">
+            مسار عملي ونظري يشرح أسس العلم النفسي، التحليل النفسي، العلاج المعرفي السلوكي، وتقنيات التطبيق العملي.
+            دفعة مخصصة للممارسين وطلاب الدراسات العليا — محتوى مبسّط، أمثلة حقيقية، وتمارين تطبيقية.
+          </p>
+          <div class="hero-cta">
+            <a class="btn-primary" onclick="goToSubscribe()">اضغط للاشتراك</a>
+            <a class="btn-outline" href="#about">اعرف المزيد</a>
+          </div>
+        </div>
+
+        <div class="hero-media" data-aos="fade-left">
+          <div class="course-card">
+            <div class="course-badge">مُصنّف: دراسات نفسية</div>
+            <img src="course.jpg" alt="صورة الكورس" class="course-image">
+            <div class="course-info">
+              <h3 class="course-name">البرنامج العملي للدراسات النفسية</h3>
+              <p class="course-short">سِلسلة فيديوهات، ملفات عمل، وشهادات حضور</p>
+            </div>
+            <div class="course-action">
+              <a class="btn-subscribe" id="subscribe-btn" onclick="goToSubscribe()">اضغط للاشتراك</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- decorative animated lines -->
+      <svg class="decor-lines" viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true">
+        <path class="wave wave1" d="M0,120 C150,20 350,220 800,100 L800 200 L0 200 Z"></path>
+        <path class="wave wave2" d="M0,140 C200,40 400,240 800,120 L800 200 L0 200 Z"></path>
+      </svg>
+    </section>
+
+    <!-- about section -->
+    <section id="about" class="about" data-aos="fade-up">
+      <div class="container">
+        <h3>عن الكورس</h3>
+        <p>
+          هذا الكورس مقدم من د. محمد نبيل ويغطي موضوعات أساسية ومتقدمة في علم النفس:
+          المفاهيم النظرية، أدوات التقييم، دراسات حالة، وأساليب علاجية مثبتة.
+          كل محتوى مُرتَّب في وحدات قصيرة وواضحة مع مصادر ومراجع حديثة.
+        </p>
+        <ul class="features">
+          <li>▶ فيديوهات قصيرة ومركزة</li>
+          <li>▶ أوراق عمل وتمارين عملية</li>
+          <li>▶ شهادة رقمية بعد الانتهاء</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- subscribe (login target) -->
+    <section id="subscribe" class="subscribe" data-aos="fade-up">
+      <div class="container narrow">
+        <h3>اشترك الآن</h3>
+        <p>سجل دخولك لتحصل على روابط الفيديوهات (غير مدرجة على يوتيوب)</p>
+
+        <!-- simple login form (front-end only) -->
+        <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+          <label>
+            اسم المستخدم
+            <input type="text" name="username" required placeholder="اسم المستخدم">
+          </label>
+          <label>
+            كلمة المرور
+            <input type="password" name="password" required placeholder="كلمة المرور">
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">دخول</button>
+            <button type="button" class="btn-outline" onclick="demoCredentials()">تجربة سريعة</button>
+          </div>
+          <p class="login-note">* بعد تسجيل الدخول سيُفتح لك صفحة الدروس (محمية على مستوى السيرفر - هذا مثال واجهة فقط).</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- footer -->
+  <footer class="site-footer" data-aos="fade-up">
+    <div class="container">
+      <p>© 2025 جميع الحقوق محفوظة — د. محمد نبيل</p>
+    </div>
+  </footer>
+
+  <!-- scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <!-- particles.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <script>
+    // init AOS
+    AOS.init({ once: true, duration: 900, easing: 'ease-out-back' });
+
+    // particles configuration (no extra file needed)
+    particlesJS('particles-js',
+      {
+        "particles": {
+          "number": { "value": 55, "density": { "enable": true, "value_area": 800 } },
+          "color": { "value": ["#ff6600","#00a86b","#ffffff"] },
+          "shape": { "type": "circle" },
+          "opacity": { "value": 0.5, "random": true },
+          "size": { "value": 4, "random": true },
+          "line_linked": { "enable": false },
+          "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
+        },
+        "interactivity": {
+          "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": false } },
+          "modes": { "repulse": { "distance": 120 } }
+        },
+        "retina_detect": true
+      }
+    );
+
+    // page transition when clicking subscribe
+    function goToSubscribe() {
+      document.documentElement.classList.add('page-leave');
+      setTimeout(() => {
+        document.getElementById('subscribe').scrollIntoView({ behavior: 'smooth' });
+        document.documentElement.classList.remove('page-leave');
+      }, 600);
+    }
+
+    // demo quick-fill (for testing)
+    function demoCredentials(){
+      const form = document.getElementById('loginForm');
+      form.username.value = 'demo';
+      form.password.value = 'demo123';
+    }
+
+    // handle login (front-end demo only)
+    function handleLogin(e){
+      e.preventDefault();
+      const u = e.target.username.value.trim();
+      // simple demo feedback
+      document.documentElement.classList.add('show-toast');
+      showToast('تم التحقق — مرحباً ' + u);
+      // in حقيقي: ترسل بيانات إلى السيرفر وتتحقق وتعيد توجيه إلى صفحة المحتوى
+      setTimeout(()=> document.documentElement.classList.remove('show-toast'), 2800);
+    }
+
+    // small toast
+    function showToast(msg){
+      let t = document.getElementById('app-toast');
+      if(!t){
+        t = document.createElement('div');
+        t.id = 'app-toast';
+        t.className = 'app-toast';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.classList.add('visible');
+      setTimeout(()=> t.classList.remove('visible'), 2600);
+    }
+  </script>
+
+</body>
+</html>
