@@ -121,71 +121,73 @@
   <!-- particles.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
-  <script>
-    // init AOS
-    AOS.init({ once: true, duration: 900, easing: 'ease-out-back' });
+<script>
+  // init AOS
+  AOS.init({ once: true, duration: 900, easing: 'ease-out-back' });
 
-    // particles configuration (no extra file needed)
-    particlesJS('particles-js',
-      {
-        "particles": {
-          "number": { "value": 55, "density": { "enable": true, "value_area": 800 } },
-          "color": { "value": ["#ff6600","#00a86b","#ffffff"] },
-          "shape": { "type": "circle" },
-          "opacity": { "value": 0.5, "random": true },
-          "size": { "value": 4, "random": true },
-          "line_linked": { "enable": false },
-          "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-        },
-        "interactivity": {
-          "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": false } },
-          "modes": { "repulse": { "distance": 120 } }
-        },
-        "retina_detect": true
-      }
-    );
-
-    // page transition when clicking subscribe
-    function goToSubscribe() {
-      document.documentElement.classList.add('page-leave');
-      setTimeout(() => {
-        document.getElementById('subscribe').scrollIntoView({ behavior: 'smooth' });
-        document.documentElement.classList.remove('page-leave');
-      }, 600);
+  // particles configuration (no extra file needed)
+  particlesJS('particles-js',
+    {
+      "particles": {
+        "number": { "value": 55, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": ["#ff6600","#00a86b","#ffffff"] },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 4, "random": true },
+        "line_linked": { "enable": false },
+        "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
+      },
+      "interactivity": {
+        "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": false } },
+        "modes": { "repulse": { "distance": 120 } }
+      },
+      "retina_detect": true
     }
+  );
 
-    // demo quick-fill (for testing)
-    function demoCredentials(){
-      const form = document.getElementById('loginForm');
-      form.username.value = 'demo';
-      form.password.value = 'demo123';
-    }
+  // page transition when clicking subscribe
+  function goToSubscribe() {
+    document.documentElement.classList.add('page-leave');
+    setTimeout(() => {
+      document.getElementById('subscribe').scrollIntoView({ behavior: 'smooth' });
+      document.documentElement.classList.remove('page-leave');
+    }, 600);
+  }
 
-    // handle login (front-end demo only)
-    function handleLogin(e){
-      e.preventDefault();
-      const u = e.target.username.value.trim();
-      // simple demo feedback
-      document.documentElement.classList.add('show-toast');
-      showToast('تم التحقق — مرحباً ' + u);
-      // in حقيقي: ترسل بيانات إلى السيرفر وتتحقق وتعيد توجيه إلى صفحة المحتوى
-      setTimeout(()=> document.documentElement.classList.remove('show-toast'), 2800);
-    }
+  // demo quick-fill (for testing)
+  function demoCredentials(){
+    const form = document.getElementById('loginForm');
+    form.username.value = 'demo';
+    form.password.value = 'demo123';
+  }
 
-    // small toast
-    function showToast(msg){
-      let t = document.getElementById('app-toast');
-      if(!t){
-        t = document.createElement('div');
-        t.id = 'app-toast';
-        t.className = 'app-toast';
-        document.body.appendChild(t);
-      }
-      t.textContent = msg;
-      t.classList.add('visible');
-      setTimeout(()=> t.classList.remove('visible'), 2600);
+  // handle login (new behavior)
+  function handleLogin(e){
+    e.preventDefault();
+    const u = e.target.username.value.trim();
+    showToast('الدخول مسموح دلوقتي بس 😂 — أهلاً ' + u);
+
+    // بعد ثانيتين يفتح صفحة الكورس
+    setTimeout(()=>{
+      window.location.href = "course.html";
+    }, 2000);
+  }
+
+  // small toast
+  function showToast(msg){
+    let t = document.getElementById('app-toast');
+    if(!t){
+      t = document.createElement('div');
+      t.id = 'app-toast';
+      t.className = 'app-toast';
+      document.body.appendChild(t);
     }
-  </script>
+    t.textContent = msg;
+    t.classList.add('visible');
+    setTimeout(()=> t.classList.remove('visible'), 1800);
+  }
+</script>
+
 
 </body>
 </html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محتوى الكورس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #ffffff, #ffb347, #00a86b);
+            background-size: 300% 300%;
+            animation: gradientShift 10s ease infinite;
+            color: #333;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #00a86b;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #333;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .video-container {
+            margin-top: 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            text-align: center;
+            font-size: 14px;
+            color: white;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffb347, #00a86b);
+            color: white;
+            font-weight: bold;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <header>🎓 كورس الدراسات النفسية - د. دعاء</header>
+
+    <div class="content">
+        <h2>مرحباً بك في محتوى الكورس</h2>
+        <p>في هذه الصفحة ستجد جميع فيديوهات ومحاضرات الكورس بشكل مرتب وسهل الوصول.</p>
+
+        <div class="video-container">
+            <!-- فيديو يوتيوب مخصص بدون أزرار مشاركة -->
+            <iframe src="https://www.youtube.com/embed/VX8EPEWJVq0?rel=0&modestbranding=1&iv_load_policy=3&fs=1&controls=1&disablekb=0&showinfo=0" 
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                    allowfullscreen>
+            </iframe>
+        </div>
+
+        <a href="index.html" class="btn-back">⬅ الرجوع للصفحة الرئيسية</a>
+    </div>
+
+    <footer>
+        جميع الحقوق محفوظة © د. محمد نبيل 2025
+    </footer>
+<script>
+  // منع الضغط على زر المشاركة أو القوائم
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+
+  // منع اختصارات الكيبورد للمشاركة أو فتح الرابط
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey && e.key === 'c') || (e.ctrlKey && e.key === 'u')) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+</body>
+</html>
