@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
@@ -7,6 +7,9 @@
   <meta name="color-scheme" content="light dark">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    /* =========================
+       VARIABLES & BASE RESET
+       ========================= */
     :root{
       --white:#ffffff;
       --bg:#fbfcfb;
@@ -27,27 +30,43 @@
       --course-card-width: 320px;
     }
 
+    *{ box-sizing:border-box }
     html,body{
-      height:100%;margin:0;font-family:'Cairo',sans-serif;background:var(--bg);color:#0f1720;direction:rtl;-webkit-font-smoothing:antialiased
+      height:100%;
+      margin:0;
+      font-family:'Cairo',sans-serif;
+      background:var(--bg);
+      color:#0f1720;
+      direction:rtl;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
-    *{box-sizing:border-box}
 
-    /* top bar */
-    header{position:fixed;left:0;right:0;top:0;height:72px;padding:10px 26px;display:flex;align-items:center;justify-content:space-between;z-index:1200;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.75));backdrop-filter:blur(6px);box-shadow:0 8px 30px rgba(10,20,18,0.06)}
+    /* ============= HEADER ============= */
+    header{
+      position:fixed;left:0;right:0;top:0;height:72px;padding:10px 26px;
+      display:flex;align-items:center;justify-content:space-between;
+      z-index:1200;
+      background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.75));
+      backdrop-filter:blur(6px);
+      box-shadow:0 8px 30px rgba(10,20,18,0.06);
+    }
     .brand{display:flex;gap:12px;align-items:center}
     .brand .logo{width:56px;height:56px;border-radius:12px;overflow:hidden;flex:0 0 56px}
     .brand img{width:100%;height:100%;object-fit:cover;display:block}
     .brand .title{font-weight:800;color:var(--accent2);font-size:18px}
+    .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+
     nav.top{display:flex;gap:12px;align-items:center}
     .nav-link{padding:8px 12px;border-radius:12px;text-decoration:none;color:var(--accent2);font-weight:700}
-    .nav-link:hover{background:linear-gradient(90deg, rgba(255,126,42,0.08), rgba(0,168,107,0.06));transform:translateY(-3px)}
+    .nav-link:hover{background:linear-gradient(90deg, rgba(255,126,42,0.08), rgba(0,168,107,0.06));transform:translateY(-3px);transition:all .18s}
 
-    /* main layout */
+    /* ============= MAIN LAYOUT ============= */
     main{max-width:var(--maxW);margin:120px auto 20px;padding:0 20px;position:relative;z-index:20}
     .hero{display:flex;gap:var(--hero-gap);align-items:center;justify-content:space-between;flex-wrap:wrap}
     @media (max-width:980px){.hero{flex-direction:column-reverse;gap:22px}}
 
-    /* left */
+    /* ============= LEFT (copy) ============= */
     .hero-left{flex:1;min-width:300px}
     .hero-title{font-size:clamp(1.8rem, 3.2vw, 2.6rem);color:var(--accent2);margin:0 0 12px}
     .hero-desc{color:var(--muted);font-size:clamp(0.98rem, 1.2vw, 1.05rem);line-height:1.7;margin-bottom:18px}
@@ -56,31 +75,101 @@
     .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;box-shadow:0 12px 30px rgba(0,0,0,0.12)}
     .btn-outline{background:transparent;border:2px solid rgba(0,0,0,0.06);color:var(--accent2);font-weight:700}
 
-    /* right */
-    .hero-right{flex: 0 0 clamp(var(--hero-right-min), 48%, var(--hero-right-max));max-width:52%;display:flex;align-items:center;justify-content:center;position:relative}
+    /* ============= RIGHT (owner visual) ============= */
+    .hero-right{
+      flex: 0 0 clamp(var(--hero-right-min), 48%, var(--hero-right-max));
+      max-width:52%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+    }
     @media (max-width:980px){.hero-right{width:92%;max-width:480px}}
 
-    .owner-wrap{width:100%;max-width:var(--owner-max);aspect-ratio:1/1;position:relative;border-radius:28px;display:flex;align-items:center;justify-content:center}
-    canvas#blob, canvas#particles{position:absolute;inset:0;pointer-events:none;border-radius:24px}
-    .floating{position:absolute;z-index:2;mix-blend-mode:normal;opacity:0.95;filter:blur(6px)}
+    .owner-wrap{
+      width:100%;
+      max-width:var(--owner-max);
+      aspect-ratio:1/1;
+      position:relative;
+      border-radius:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:visible;
+    }
 
-    .owner-foreground{position:relative;z-index:3;display:flex;align-items:center;justify-content:center}
-    .owner-photo{width:58%;max-width:var(--owner-photo-max);min-width:var(--owner-photo-min);border-radius:20px;object-fit:contain;display:block;box-shadow:0 30px 70px rgba(5,10,8,0.12);background:transparent}
+    /* canvases behind (blob + particles) */
+    canvas#blob, canvas#particles{
+      position:absolute;inset:0;pointer-events:none;border-radius:24px;z-index:1;
+    }
 
-    /* course card (general) */
+    /* floating subtle shapes */
+    .floating{
+      position:absolute;z-index:2;mix-blend-mode:normal;opacity:0.95;filter:blur(6px);
+      transition:transform .28s ease;
+    }
+
+    /* foreground area that holds the image.
+       we add subtle decorative gradients here so any halo blends nicely */
+    .owner-foreground{
+      position:relative;
+      z-index:3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      /* padding acts as a small "backdrop" behind the photo to hide fringe */
+      padding:6%;
+      border-radius:20px;
+
+      /* subtle twin gradients matching site accents to harmonize halo */
+      background-image:
+        radial-gradient(420px 240px at 20% 20%, rgba(0,168,107,0.06), rgba(255,255,255,0)),
+        radial-gradient(260px 160px at 85% 85%, rgba(255,126,42,0.035), rgba(255,255,255,0));
+    }
+
+    /* the owner photo itself - responsive + anti-halo mask */
+    .owner-photo{
+      width: clamp(var(--owner-photo-min), 58%, var(--owner-photo-max));
+      border-radius:16px;
+      object-fit:cover;
+      display:block;
+      background:transparent;
+      /* soft shadow for depth */
+      box-shadow:0 30px 70px rgba(5,10,8,0.12);
+
+      /* -- ATTEMPT TO HIDe TRANSPARENT FRINGE (HALO):
+         Apply a subtle mask that trims the very outermost semitransparent pixels.
+         This reduces the visible "halo" when the PNG has antialiased edges.
+         Keep mask tight so portrait shape remains intact. */
+      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%);
+      mask-image: radial-gradient(circle, rgba(0,0,0,1) 94%, rgba(0,0,0,0) 100%);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position:center;
+      mask-position:center;
+      -webkit-mask-size:100% 100%;
+      mask-size:100% 100%;
+
+      /* slight smoothing (optional) */
+      backface-visibility:hidden;
+      transform: translateZ(0);
+    }
+
+    /* small visual niceties */
+    .owner-wrap:focus{outline:2px solid rgba(0,168,107,0.12);outline-offset:6px}
+
+    /* ============= COURSE CARD ============= */
     .course-card{background:var(--white);border-radius:14px;padding:14px;box-shadow:var(--card-shadow);text-align:center;min-width:260px}
     .course-thumb{width:100%;height:160px;object-fit:cover;border-radius:10px;display:block;margin-bottom:12px}
     .course-title{font-weight:800;color:#0f1720;margin:0 0 6px}
     .course-sub{color:var(--muted);font-weight:600;margin:0 0 12px}
-
-    /* زر الاشتراك داخل الكارت — بدون إضاءة أو شادو (solid, بسيط) */
     .btn-sub{padding:10px 20px;border-radius:999px;background:var(--accent2);color:#fff;font-weight:800;border:0;cursor:pointer;box-shadow:none}
 
-    /* bottom course placement (above footer) */
     .bottom-course{display:flex;justify-content:center;max-width:var(--maxW);margin:28px auto 8px;padding:0 20px;position:relative;z-index:10}
     .bottom-course .course-card{width:var(--course-card-width);max-width:100%}
 
-    /* modal لتفاصيل الكورس */
+    /* ============= MODALS ============= */
     .details-modal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.45);z-index:200000;opacity:0;pointer-events:none;transition:opacity .18s}
     .details-modal.visible{opacity:1;pointer-events:auto}
     .details-box{background:#fff;border-radius:12px;padding:20px;max-width:820px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.25);direction:rtl;text-align:right}
@@ -88,13 +177,6 @@
     .details-box p{color:#222;line-height:1.6}
     .details-features{display:flex;flex-direction:column;gap:8px;margin-top:12px}
     .details-close{margin-top:16px;padding:10px 14px;border-radius:10px;border:0;background:#eee;cursor:pointer}
-
-    /* about */
-    .about{margin-top:28px;background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,255,255,0.98));padding:22px;border-radius:14px;box-shadow:var(--card-shadow)}
-    .about h3{color:var(--accent2);margin:0 0 10px}
-    .features{display:flex;gap:12px;flex-wrap:wrap}
-
-    footer{margin-top:12px;text-align:center;padding:20px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:700}
 
     .steal-modal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.6);z-index:99999;opacity:0;pointer-events:none;transition:opacity .18s;}
     .steal-modal.visible{opacity:1;pointer-events:auto}
@@ -106,7 +188,7 @@
 
     .note-protect{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
 
-    /* responsiveness tuning */
+    /* ============= RESPONSIVE TUNING ============= */
     @media (max-width:900px){
       :root{--hero-gap:22px;--owner-max:420px;--owner-photo-max:300px;--course-card-width:300px;}
     }
@@ -115,24 +197,25 @@
       .owner-wrap{max-width:360px}
       .hero-title{font-size:1.8rem}
       :root{--hero-gap:18px;--owner-photo-max:280px;--course-card-width:86%;}
-      .owner-wrap > .course-card-wrapper{bottom: -48px;}
     }
+
+    /* small helpful defaults for focus outlines */
+    button:focus, a:focus { outline: 3px solid rgba(0,168,107,0.12); outline-offset:4px; }
   </style>
 </head>
 <body>
 
   <header>
     <div class="brand">
-      <div class="logo" aria-hidden="true"><img src="owner.png" alt="د. محمد نبيل"></div>
+      <div class="logo" aria-hidden="true"><img src="logo.png" alt="د. محمد نبيل"></div>
       <div>
         <div class="title">د. محمد نبيل</div>
         <div class="sub">منصة الدراسات النفسية</div>
       </div>
     </div>
 
-    <nav class="top">
+    <nav class="top" aria-label="روابط رئيسية">
       <a class="nav-link" href="#about">عن الكورس</a>
-      <!-- غيرت الرابط إلى زر عشان نتحكم في عرض التفاصيل -->
       <button id="knowMoreBtn" class="btn btn-outline" aria-haspopup="dialog">اعرف المزيد</button>
     </nav>
   </header>
@@ -153,21 +236,21 @@
       <div class="hero-right" aria-hidden="false">
         <div class="owner-wrap" id="ownerWrap" role="img" aria-label="صورة صاحب الكورس">
           <!-- particles behind -->
-          <canvas id="particles"></canvas>
+          <canvas id="particles" aria-hidden="true"></canvas>
+
           <!-- organic blob layer (green) -->
-          <canvas id="blob"></canvas>
+          <canvas id="blob" aria-hidden="true"></canvas>
 
           <!-- floating shapes -->
-          <div class="floating" id="f1" style="left:6%;top:8%;width:80px;height:80px;border-radius:28%;background:rgba(0,168,107,0.12)"></div>
-          <div class="floating" id="f2" style="right:6%;bottom:6%;width:70px;height:70px;border-radius:36%;background:rgba(255,126,42,0.10)"></div>
-          <div class="floating" id="f3" style="left:18%;bottom:18%;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.12)"></div>
+          <div class="floating" style="left:6%;top:8%;width:80px;height:80px;border-radius:28%;background:rgba(0,168,107,0.12)"></div>
+          <div class="floating" style="right:6%;bottom:6%;width:70px;height:70px;border-radius:36%;background:rgba(255,126,42,0.10)"></div>
+          <div class="floating" style="left:18%;bottom:18%;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.12)"></div>
 
-          <!-- owner image (foreground) - neutral -->
-          <div class="owner-foreground">
-            <img src="owner.png" alt="صورة صاحب الكورس" class="owner-photo" id="ownerPhoto">
+          <!-- owner image (foreground) -->
+          <div class="owner-foreground" aria-hidden="false">
+            <!-- loading="lazy" and role/presentational hints; use a PNG with transparent background -->
+            <img src="owner.png" alt="د. محمد نبيل" class="owner-photo" id="ownerPhoto" loading="lazy">
           </div>
-
-          <!-- ملاحظة: حذفت الكارت من هنا -- لأن الكارت الآن موجود في آخر الصفحة -->
         </div>
       </div>
     </section>
@@ -187,7 +270,7 @@
   <!-- كارت الكورس في آخر الصفحة (فوق الفوتر مباشرة) -->
   <div class="bottom-course" aria-hidden="false">
     <div class="course-card" role="group" aria-label="معلومات الكورس">
-      <img src="course.jpg" alt="صورة الكورس" class="course-thumb">
+      <img src="course.jpg" alt="صورة الكورس" class="course-thumb" loading="lazy">
       <div class="course-title">البرنامج العملي للدراسات النفسية</div>
       <div class="course-sub">سلسلة فيديوهات وملفات عمل</div>
       <div class="course-action">
@@ -199,8 +282,8 @@
   <footer>© 2025 جميع الحقوق محفوظة — د. محمد نبيل</footer>
 
   <!-- مودال تفاصيل الكورس -->
-  <div class="details-modal" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
-    <div class="details-box">
+  <div class="details-modal" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle" tabindex="-1">
+    <div class="details-box" role="document">
       <h3 id="detailsTitle">تفاصيل الكورس — البرنامج العملي للدراسات النفسية</h3>
       <p>دورة مركزة تحتوي على فيديوهات عملية ونظرية، أوراق عمل قابلة للتحميل، ودعم مباشر للمشتركين. مناسبة للممارسين وطلاب الدراسات العليا.</p>
       <div class="details-features">
@@ -217,7 +300,7 @@
   </div>
 
   <!-- Steal modal -->
-  <div class="steal-modal" id="stealModal" role="alert" aria-live="assertive" aria-modal="true">
+  <div class="steal-modal" id="stealModal" role="alert" aria-live="assertive" aria-modal="true" tabindex="-1">
     <div class="steal-box" role="document">
       <div class="steal-emoji" id="stealEmoji">😡</div>
       <div class="steal-text" id="stealTitle">انت هتسرق ايه؟</div>
@@ -227,233 +310,281 @@
   </div>
 
   <script>
-    // ===== helpers =====
-    function showStealModal(msg){
-      const modal = document.getElementById('stealModal');
-      const title = document.getElementById('stealTitle');
-      const sub = document.getElementById('stealSub');
-      title.textContent = 'انت هتسرق ايه؟';
-      sub.textContent = msg || 'غير مسموح نسخ أو تصوير المحتوى هنا.';
-      modal.classList.add('visible');
-    }
-    document.getElementById('stealClose').addEventListener('click', ()=> document.getElementById('stealModal').classList.remove('visible'));
+    /* ==========================
+       DOM READY - all bindings
+       ========================== */
+    (function () {
+      // small safe-query helper
+      const $ = (sel) => document.querySelector(sel);
+      const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-    // show angry modal on attempts
-    function punishAttempt(reason){
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.inset = '0';
-      overlay.style.background = 'rgba(0,0,0,0.9)';
-      overlay.style.zIndex = '99998';
-      document.body.appendChild(overlay);
-      showStealModal(reason);
-      setTimeout(()=> {
-        try { overlay.remove(); } catch(e){}
-      }, 900);
-    }
+      // elements
+      const subscribeBtn = $('#subscribeBtn');
+      const courseSubscribe = $('#courseSubscribe');
+      const knowMoreBtn = $('#knowMoreBtn');
+      const detailsModal = $('#detailsModal');
+      const detailsClose = $('#detailsClose');
+      const stealModal = $('#stealModal');
+      const stealClose = $('#stealClose');
+      const ownerWrap = document.getElementById('ownerWrap');
 
-    // ===== disable right click and selection outside about =====
-    document.addEventListener('contextmenu', function(e){
-      e.preventDefault();
-      punishAttempt('منع كليك يمين — هذا محتوى مدفوع.');
-    });
-
-    document.addEventListener('selectstart', function(e){
-      if(!e.target.closest('.about')){ e.preventDefault(); punishAttempt('غير مسموح بنسخ المحتوى.'); }
-    });
-
-    // ===== keyboard protections =====
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'PrintScreen' || e.keyCode === 44){
-        try { navigator.clipboard.writeText(''); } catch(err){}
-        punishAttempt('محاولة أخذ لقطة شاشة معلومة.');
+      // focus management for accessibility
+      let lastFocused = null;
+      function openModal(modalEl, focusEl) {
+        lastFocused = document.activeElement;
+        modalEl.classList.add('visible');
+        // small focus trap: focus first actionable
+        setTimeout(()=> (focusEl || modalEl).focus?.(), 50);
+        document.body.style.overflow = 'hidden';
       }
-      const blocked = (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
-                      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
-                      (e.key === 'F12');
-      if(blocked){
-        e.preventDefault();
-        punishAttempt('غير مسموح بفتح أدوات المطور أو حفظ الصفحة.');
+      function closeModal(modalEl) {
+        modalEl.classList.remove('visible');
+        document.body.style.overflow = '';
+        if (lastFocused && lastFocused.focus) lastFocused.focus();
       }
-    });
 
-    // ===== detect devtools via resizing heuristic =====
-    (function detectDevTools(){
-      let threshold = 160;
-      let last = { open: false, time: Date.now() };
-      setInterval(function(){
-        const widthDiff = window.outerWidth - window.innerWidth;
-        const heightDiff = window.outerHeight - window.innerHeight;
-        const isOpen = widthDiff > threshold || heightDiff > threshold;
-        if(isOpen && !last.open){
-          last.open = true;
-          last.time = Date.now();
-          punishAttempt('تم كشف أدوات التطوير — هذا محتوى محمي.');
-        } else if(!isOpen){
-          last.open = false;
+      // buttons
+      subscribeBtn?.addEventListener('click', ()=> location.href = 'login.html');
+      courseSubscribe?.addEventListener('click', ()=> location.href = 'login.html');
+
+      knowMoreBtn?.addEventListener('click', ()=> openModal(detailsModal, detailsClose));
+      detailsClose?.addEventListener('click', ()=> closeModal(detailsModal));
+      detailsModal?.addEventListener('click', (e)=> { if (e.target === detailsModal) closeModal(detailsModal); });
+
+      stealClose?.addEventListener('click', ()=> closeModal(stealModal));
+
+      // close on ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (detailsModal.classList.contains('visible')) closeModal(detailsModal);
+          if (stealModal.classList.contains('visible')) closeModal(stealModal);
         }
-      }, 800);
-    })();
-
-    // ===== visibility change (detect switching apps / screen-recorders sometimes) =====
-    document.addEventListener('visibilitychange', function(){
-      if(document.hidden){
-        const overlay = document.createElement('div');
-        overlay.style.position='fixed';overlay.style.inset='0';overlay.style.background='rgba(0,0,0,0.95)';overlay.style.zIndex='99997';
-        document.body.appendChild(overlay);
-        setTimeout(()=> overlay.remove(), 500);
-      }
-    });
-
-    // ===== Buttons behavior =====
-    document.getElementById('subscribeBtn').addEventListener('click', function(){
-      window.location.href = 'login.html';
-    });
-
-    // courseSubscribe is in bottom card
-    document.getElementById('courseSubscribe').addEventListener('click', function(){
-      window.location.href = 'login.html';
-    });
-
-    // اعرض مودال تفاصيل الكورس عند الضغط على "اعرف المزيد"
-    const knowMoreBtn = document.getElementById('knowMoreBtn');
-    const detailsModal = document.getElementById('detailsModal');
-    const detailsClose = document.getElementById('detailsClose');
-
-    knowMoreBtn.addEventListener('click', function(){
-      detailsModal.classList.add('visible');
-      // focus for accessibility
-      detailsClose.focus();
-    });
-    detailsClose.addEventListener('click', function(){ detailsModal.classList.remove('visible'); });
-
-    // اغلاق لو ضغط خارج الصندوق
-    detailsModal.addEventListener('click', function(e){
-      if(e.target === detailsModal) detailsModal.classList.remove('visible');
-    });
-
-    // السماح بزر الهروب ESC لإغلاق المودال
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape'){
-        if(detailsModal.classList.contains('visible')) detailsModal.classList.remove('visible');
-        if(document.getElementById('stealModal').classList.contains('visible')) document.getElementById('stealModal').classList.remove('visible');
-      }
-    });
-
-    // ===== Canvas blob (organic green shape) =====
-    (function(){
-      const c = document.getElementById('blob');
-      const wrap = document.getElementById('ownerWrap');
-      if(!c || !wrap) return;
-      const ctx = c.getContext('2d');
-
-      function resize(){
-        const r = wrap.getBoundingClientRect();
-        c.width = Math.round(r.width);
-        c.height = Math.round(r.height);
-        c.style.width = r.width + 'px';
-        c.style.height = r.height + 'px';
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      let t = 0;
-      function draw(){
-        const w = c.width, h = c.height;
-        ctx.clearRect(0,0,w,h);
-
-        const cx = w/2, cy = h/2;
-        const base = Math.min(w,h) * 0.36;
-        ctx.beginPath();
-        const steps = 140;
-        for(let i=0;i<=steps;i++){
-          const a = (i/steps)*Math.PI*2;
-          const noise = Math.sin(a*3 + t*1.1)*18 + Math.cos(a*5 + t*0.8)*10;
-          const r = base + noise;
-          const x = cx + r*Math.cos(a);
-          const y = cy + r*Math.sin(a);
-          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-        }
-        ctx.closePath();
-        const grad = ctx.createLinearGradient(0,0,w,h);
-        grad.addColorStop(0, 'rgba(0,168,107,0.18)');
-        grad.addColorStop(0.6, 'rgba(0,168,107,0.09)');
-        grad.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.lineWidth = 1.6;
-        ctx.strokeStyle = 'rgba(0,120,80,0.12)';
-        ctx.stroke();
-
-        t += 0.014;
-        requestAnimationFrame(draw);
-      }
-      draw();
-    })();
-
-    // ===== particles around owner =====
-    (function(){
-      const p = document.getElementById('particles');
-      const wrap = document.getElementById('ownerWrap');
-      if(!p||!wrap) return;
-      const ctx = p.getContext('2d');
-
-      function resize(){
-        const r = wrap.getBoundingClientRect();
-        p.width = Math.round(r.width);
-        p.height = Math.round(r.height);
-        p.style.width = r.width + 'px';
-        p.style.height = r.height + 'px';
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      const particles = [];
-      const colors = ['rgba(0,168,107,0.95)','rgba(255,126,42,0.95)','rgba(255,255,255,0.95)'];
-      for(let i=0;i<36;i++){
-        particles.push({
-          x: Math.random()*p.width,
-          y: Math.random()*p.height,
-          r: Math.random()*3+0.8,
-          vx: (Math.random()-0.5)*0.4,
-          vy: (Math.random()-0.5)*0.4,
-          c: colors[Math.floor(Math.random()*colors.length)],
-          a: 0.5 + Math.random()*0.9
-        });
-      }
-
-      function anim(){
-        ctx.clearRect(0,0,p.width,p.height);
-        particles.forEach(pt=>{
-          pt.x += pt.vx;
-          pt.y += pt.vy;
-          if(pt.x < -10) pt.x = p.width + 10;
-          if(pt.x > p.width + 10) pt.x = -10;
-          if(pt.y < -10) pt.y = p.height + 10;
-          if(pt.y > p.height + 10) pt.y = -10;
-
-          ctx.beginPath();
-          ctx.fillStyle = pt.c.replace('0.95', pt.a.toString());
-          ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI*2);
-          ctx.fill();
-        });
-        requestAnimationFrame(anim);
-      }
-      anim();
-
-      wrap.addEventListener('mousemove', (e)=>{
-        const rect = wrap.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-        particles.forEach(pt=>{
-          const dx = pt.x - mx, dy = pt.y - my;
-          const d = Math.sqrt(dx*dx + dy*dy);
-          if(d < 120){
-            pt.vx += (dx / d)*0.03;
-            pt.vy += (dy / d)*0.03;
-          }
-        });
       });
+
+      /* ===========================
+         PROTECTION / ANTI-ATTEMPTS
+         (kept but smoothed, non-destructive)
+         =========================== */
+      function showStealModal(msg){
+        $('#stealTitle').textContent = 'انت هتسرق ايه؟';
+        $('#stealSub').textContent = msg || 'غير مسموح نسخ أو تصوير المحتوى هنا.';
+        openModal(stealModal, stealClose);
+      }
+
+      let punishmentLock = false;
+      function punishAttempt(reason){
+        // avoid flooding UI
+        if(punishmentLock) return;
+        punishmentLock = true;
+        // soft overlay
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.inset = '0';
+        overlay.style.background = 'rgba(0,0,0,0.85)';
+        overlay.style.zIndex = '99998';
+        document.body.appendChild(overlay);
+
+        showStealModal(reason);
+
+        setTimeout(()=> {
+          closeModal(stealModal);
+          try { overlay.remove(); } catch(e){}
+          punishmentLock = false;
+        }, 1100);
+      }
+
+      // context menu & selection restrictions (outside about)
+      document.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+        punishAttempt('منع كليك يمين — هذا محتوى مدفوع.');
+      });
+
+      document.addEventListener('selectstart', function(e){
+        if(!e.target.closest('.about')){ e.preventDefault(); punishAttempt('غير مسموح بنسخ المحتوى.'); }
+      });
+
+      // keyboard protections (PrintScreen / devtools shortcuts)
+      document.addEventListener('keydown', function(e){
+        // PrintScreen key
+        if(e.key === 'PrintScreen' || e.keyCode === 44){
+          try { navigator.clipboard.writeText(''); } catch(err){}
+          punishAttempt('محاولة أخذ لقطة شاشة.');
+          return;
+        }
+        // blocked combos
+        const blocked = (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
+                        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
+                        (e.key === 'F12');
+        if(blocked){
+          e.preventDefault();
+          punishAttempt('غير مسموح بفتح أدوات المطور أو حفظ الصفحة.');
+        }
+      });
+
+      // detect devtools via resize heuristic (light-touch)
+      (function detectDevTools(){
+        let threshold = 160;
+        let lastOpen = false;
+        setInterval(function(){
+          try {
+            const widthDiff = window.outerWidth - window.innerWidth;
+            const heightDiff = window.outerHeight - window.innerHeight;
+            const isOpen = widthDiff > threshold || heightDiff > threshold;
+            if(isOpen && !lastOpen){
+              lastOpen = true;
+              punishAttempt('تم كشف أدوات التطوير — هذا محتوى محمي.');
+            } else if(!isOpen){
+              lastOpen = false;
+            }
+          } catch(e){}
+        }, 900);
+      })();
+
+      // visibility change: brief overlay to disrupt simple recorders
+      document.addEventListener('visibilitychange', function(){
+        if(document.hidden){
+          const overlay = document.createElement('div');
+          overlay.style.position='fixed';overlay.style.inset='0';overlay.style.background='rgba(0,0,0,0.95)';overlay.style.zIndex='99997';
+          document.body.appendChild(overlay);
+          setTimeout(()=> overlay.remove(), 500);
+        }
+      });
+
+      /* ===========================
+         CANVAS: organic blob + particles
+         Uses ResizeObserver for crisp sizing
+         =========================== */
+      (function initBlobAndParticles(){
+        // helper to create canvas contexts & resize via ResizeObserver
+        const blobCanvas = document.getElementById('blob');
+        const particlesCanvas = document.getElementById('particles');
+        if(!ownerWrap) return;
+
+        // resize utility
+        const resizeCanvasToWrap = (c) => {
+          const r = ownerWrap.getBoundingClientRect();
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+          c.width = Math.round(r.width * dpr);
+          c.height = Math.round(r.height * dpr);
+          c.style.width = r.width + 'px';
+          c.style.height = r.height + 'px';
+          const ctx = c.getContext('2d');
+          ctx.setTransform(dpr,0,0,dpr,0,0);
+        };
+
+        // --- BLOBS ---
+        if(blobCanvas){
+          const ctx = blobCanvas.getContext('2d');
+          let t = 0;
+          function drawBlob(){
+            const w = blobCanvas.width / (window.devicePixelRatio || 1);
+            const h = blobCanvas.height / (window.devicePixelRatio || 1);
+            ctx.clearRect(0,0,w,h);
+            const cx = w/2, cy = h/2;
+            const base = Math.min(w,h) * 0.36;
+            ctx.beginPath();
+            const steps = 140;
+            for(let i=0;i<=steps;i++){
+              const a = (i/steps)*Math.PI*2;
+              const noise = Math.sin(a*3 + t*1.1)*18 + Math.cos(a*5 + t*0.8)*10;
+              const r = base + noise;
+              const x = cx + r*Math.cos(a);
+              const y = cy + r*Math.sin(a);
+              if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+            }
+            ctx.closePath();
+            const grad = ctx.createLinearGradient(0,0,w,h);
+            grad.addColorStop(0, 'rgba(0,168,107,0.18)');
+            grad.addColorStop(0.6, 'rgba(0,168,107,0.09)');
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = 'rgba(0,120,80,0.10)';
+            ctx.stroke();
+
+            t += 0.014;
+            requestAnimationFrame(drawBlob);
+          }
+          // observe and resize
+          const ro = new ResizeObserver(()=> resizeCanvasToWrap(blobCanvas));
+          ro.observe(ownerWrap);
+          resizeCanvasToWrap(blobCanvas);
+          drawBlob();
+        }
+
+        // --- PARTICLES ---
+        if(particlesCanvas){
+          const ctx = particlesCanvas.getContext('2d');
+          let particles = [];
+          const colors = ['rgba(0,168,107,0.95)','rgba(255,126,42,0.95)','rgba(255,255,255,0.95)'];
+
+          function createParticles(){
+            particles = [];
+            const w = particlesCanvas.width / (window.devicePixelRatio || 1);
+            const h = particlesCanvas.height / (window.devicePixelRatio || 1);
+            for(let i=0;i<36;i++){
+              particles.push({
+                x: Math.random()*w,
+                y: Math.random()*h,
+                r: Math.random()*3+0.8,
+                vx: (Math.random()-0.5)*0.4,
+                vy: (Math.random()-0.5)*0.4,
+                c: colors[Math.floor(Math.random()*colors.length)],
+                a: 0.5 + Math.random()*0.9
+              });
+            }
+          }
+
+          function drawParticles(){
+            const w = particlesCanvas.width / (window.devicePixelRatio || 1);
+            const h = particlesCanvas.height / (window.devicePixelRatio || 1);
+            ctx.clearRect(0,0,w,h);
+            particles.forEach(pt=>{
+              pt.x += pt.vx;
+              pt.y += pt.vy;
+              if(pt.x < -10) pt.x = w + 10;
+              if(pt.x > w + 10) pt.x = -10;
+              if(pt.y < -10) pt.y = h + 10;
+              if(pt.y > h + 10) pt.y = -10;
+
+              ctx.beginPath();
+              // adapt alpha per particle
+              const fill = pt.c.replace(/0\.95/, pt.a.toFixed(2));
+              ctx.fillStyle = fill;
+              ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI*2);
+              ctx.fill();
+            });
+            requestAnimationFrame(drawParticles);
+          }
+
+          const ro2 = new ResizeObserver(()=> {
+            resizeCanvasToWrap(particlesCanvas);
+            createParticles();
+          });
+          ro2.observe(ownerWrap);
+          resizeCanvasToWrap(particlesCanvas);
+          createParticles();
+          drawParticles();
+
+          // small mouse interaction
+          ownerWrap.addEventListener('mousemove', (e) => {
+            const rect = ownerWrap.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            particles.forEach(pt=>{
+              const dx = pt.x - mx, dy = pt.y - my;
+              const d = Math.sqrt(dx*dx + dy*dy) || 1;
+              if(d < 120){
+                pt.vx += (dx / d)*0.02;
+                pt.vy += (dy / d)*0.02;
+              }
+            });
+          }, { passive: true });
+        }
+      })();
+
+      // end of DOM ready
     })();
   </script>
 </body>
