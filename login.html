@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الدخول</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Tahoma', sans-serif;
+        background: #fff;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* خلفية الأمواج */
+    .waves {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        z-index: -1;
+        overflow: hidden;
+    }
+    .wave {
+        position: absolute;
+        bottom: 0;
+        width: 200%;
+        height: 200px;
+        background: rgba(255, 165, 0, 0.4);
+        border-radius: 43%;
+        animation: waveAnim 8s infinite linear;
+    }
+    .wave:nth-child(2) {
+        background: rgba(255, 140, 0, 0.3);
+        animation-duration: 10s;
+    }
+    .wave:nth-child(3) {
+        background: rgba(255, 100, 0, 0.2);
+        animation-duration: 12s;
+    }
+
+    @keyframes waveAnim {
+        from { transform: translateX(0) rotate(0deg); }
+        to { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    /* صندوق تسجيل الدخول */
+    .login-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
+        width: 320px;
+        text-align: center;
+    }
+
+    h2 {
+        color: orange;
+        margin-bottom: 15px;
+    }
+
+    input[type="text"], input[type="password"] {
+        width: 90%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 2px solid orange;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+    }
+
+    button {
+        background: orange;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: darkorange;
+    }
+
+    .error {
+        color: red;
+        margin-top: 10px;
+    }
+
+    /* رابط واتساب */
+    .whatsapp-link {
+        display: inline-block;
+        margin-top: 15px;
+        text-decoration: none;
+        color: green;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .whatsapp-link img {
+        width: 20px;
+        vertical-align: middle;
+        margin-left: 5px;
+    }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>تسجيل الدخول</h2>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="اسم المستخدم" required><br>
+        <input type="password" id="password" placeholder="كلمة المرور" required><br>
+        <button type="submit">دخول</button>
+    </form>
+    <div class="error" id="errorMsg"></div>
+    
+    <a class="whatsapp-link" href="https://wa.me/201010238579?text=أنا%20عاوز%20اشترك%20في%20الكورس" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
+        تواصل عبر واتساب للحصول على بيانات الدخول
+    </a>
+</div>
+
+<!-- خلفية الأمواج -->
+<div class="waves">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+</div>
+
+<script>
+    const users = [
+        { username: "1001", password: "pass123" },
+        { username: "1002", password: "alpha456" },
+        { username: "1003", password: "zxc789" },
+        { username: "1004", password: "moon2025" },
+        { username: "1005", password: "star999" },
+        { username: "1006", password: "light888" },
+        { username: "1007", password: "sunshine" },
+        { username: "1008", password: "secure777" },
+        { username: "1009", password: "blue202" },
+        { username: "1010", password: "night456" },
+        { username: "1011", password: "fire321" },
+        { username: "1012", password: "water789" },
+        { username: "1013", password: "earth654" },
+        { username: "1014", password: "wind333" },
+        { username: "1015", password: "shadow" },
+        { username: "1016", password: "cloud99" },
+        { username: "1017", password: "nova202" },
+        { username: "1018", password: "matrix11" },
+        { username: "1019", password: "tiger888" },
+        { username: "1020", password: "dragon77" }
+    ];
+
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        const userFound = users.find(user => user.username === username && user.password === password);
+
+        if (userFound) {
+            window.location.href = "course.html";
+        } else {
+            errorMsg.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        }
+    });
+</script>
+
+</body>
+</html>

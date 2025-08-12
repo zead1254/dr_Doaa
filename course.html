@@ -101,8 +101,8 @@
         <p>في هذه الصفحة ستجد جميع فيديوهات ومحاضرات الكورس بشكل مرتب وسهل الوصول.</p>
 
         <div class="video-container">
-            <!-- فيديو يوتيوب مخصص بدون أزرار مشاركة -->
-            <iframe src="https://www.youtube.com/embed/VX8EPEWJVq0?rel=0&modestbranding=1&iv_load_policy=3&fs=1&controls=1&disablekb=0&showinfo=0" 
+            <!-- فيديو يوتيوب مخصص -->
+            <iframe src="https://www.youtube.com/embed/VX8EPEWJVq0?rel=0&modestbranding=1&iv_load_policy=3&fs=1&controls=1&disablekb=0"
                     title="YouTube video player"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                     allowfullscreen>
@@ -115,17 +115,28 @@
     <footer>
         جميع الحقوق محفوظة © د. محمد نبيل 2025
     </footer>
+
 <script>
-  // منع الضغط على زر المشاركة أو القوائم
+  // منع الضغط على الزر الأيمن
   document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
   });
 
-  // منع اختصارات الكيبورد للمشاركة أو فتح الرابط
+  // منع اختصارات النسخ أو عرض الكود
   document.addEventListener('keydown', function(e) {
-    if ((e.ctrlKey && e.key === 'c') || (e.ctrlKey && e.key === 'u')) {
+    if (
+      (e.ctrlKey && (e.key === 'u' || e.key === 'U')) || // View Source
+      (e.ctrlKey && (e.key === 'c' || e.key === 'C')) || // Copy
+      (e.ctrlKey && (e.key === 's' || e.key === 'S')) || // Save
+      (e.ctrlKey && (e.shiftKey && (e.key === 'i' || e.key === 'I'))) // DevTools
+    ) {
       e.preventDefault();
     }
+  });
+
+  // منع سحب الفيديو أو فتحه في نافذة جديدة
+  document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
   });
 </script>
 

@@ -1,0 +1,130 @@
+تمام، هعملك صفحة **login.html** فيها جافا سكريبت بيشيك على 20 يوزرنيم وباسورد، ولو البيانات صح يدخل على صفحة الكورس، ولو غلط يطلع له رسالة خطأ.
+
+📄 الكود:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.5);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: gold;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background: gold;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: orange;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+        </form>
+        <div class="error" id="errorMsg"></div>
+    </div>
+
+<script>
+    // بيانات الدخول المسموح بها
+    const users = [
+        { username: "1001", password: "pass123" },
+        { username: "1002", password: "alpha456" },
+        { username: "1003", password: "zxc789" },
+        { username: "1004", password: "moon2025" },
+        { username: "1005", password: "star999" },
+        { username: "1006", password: "light888" },
+        { username: "1007", password: "sunshine" },
+        { username: "1008", password: "secure777" },
+        { username: "1009", password: "blue202" },
+        { username: "1010", password: "night456" },
+        { username: "1011", password: "fire321" },
+        { username: "1012", password: "water789" },
+        { username: "1013", password: "earth654" },
+        { username: "1014", password: "wind333" },
+        { username: "1015", password: "shadow" },
+        { username: "1016", password: "cloud99" },
+        { username: "1017", password: "nova202" },
+        { username: "1018", password: "matrix11" },
+        { username: "1019", password: "tiger888" },
+        { username: "1020", password: "dragon77" }
+    ];
+
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        // التحقق من صحة البيانات
+        const userFound = users.find(user => user.username === username && user.password === password);
+
+        if (userFound) {
+            window.location.href = "course.html"; // لو صح يدخل على صفحة الكورس
+        } else {
+            errorMsg.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        }
+    });
+</script>
+
+</body>
+</html>
+```
+
+🔹 كده أي يوزرنيم وباسورد من اللي في الـ 20 اللي فوق هيشتغل، والباقي هيطلعله رسالة خطأ.
+🔹 لو حبيت، أقدر أكتب لك دلوقتي **course.html** اللي هتفتح بعد تسجيل الدخول.
+
+تحب أعملها دلوقتي؟

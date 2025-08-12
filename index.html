@@ -3,191 +3,458 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>كورس الدراسات النفسية - د. محمد نبيل</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- AOS for scroll animations -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <title>ادخل — منصة الدراسات النفسية — د. محمد نبيل</title>
+  <meta name="color-scheme" content="light dark">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --white:#ffffff;
+      --bg:#fbfcfb;
+      --accent1:#ff7e2a;
+      --accent2:#00a86b;
+      --muted:#6b7a7a;
+      --card-shadow: 0 20px 50px rgba(10,20,18,0.08);
+      --glass: rgba(255,255,255,0.7);
+      --radius:18px;
+      --maxW:1150px;
+
+      --hero-gap: 32px;
+      --hero-right-min: 320px;
+      --hero-right-max: 540px;
+      --owner-max: 540px;
+      --owner-photo-min: 220px;
+      --owner-photo-max: 360px;
+      --course-card-width: 320px;
+    }
+
+    html,body{
+      height:100%;margin:0;font-family:'Cairo',sans-serif;background:var(--bg);color:#0f1720;direction:rtl;-webkit-font-smoothing:antialiased
+    }
+    *{box-sizing:border-box}
+
+    /* top bar */
+    header{position:fixed;left:0;right:0;top:0;height:72px;padding:10px 26px;display:flex;align-items:center;justify-content:space-between;z-index:1200;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.75));backdrop-filter:blur(6px);box-shadow:0 8px 30px rgba(10,20,18,0.06)}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand .logo{width:56px;height:56px;border-radius:12px;overflow:hidden;flex:0 0 56px}
+    .brand img{width:100%;height:100%;object-fit:cover;display:block}
+    .brand .title{font-weight:800;color:var(--accent2);font-size:18px}
+    nav.top{display:flex;gap:12px;align-items:center}
+    .nav-link{padding:8px 12px;border-radius:12px;text-decoration:none;color:var(--accent2);font-weight:700}
+    .nav-link:hover{background:linear-gradient(90deg, rgba(255,126,42,0.08), rgba(0,168,107,0.06));transform:translateY(-3px)}
+
+    /* main layout */
+    main{max-width:var(--maxW);margin:120px auto 20px;padding:0 20px;position:relative;z-index:20}
+    .hero{display:flex;gap:var(--hero-gap);align-items:center;justify-content:space-between;flex-wrap:wrap}
+    @media (max-width:980px){.hero{flex-direction:column-reverse;gap:22px}}
+
+    /* left */
+    .hero-left{flex:1;min-width:300px}
+    .hero-title{font-size:clamp(1.8rem, 3.2vw, 2.6rem);color:var(--accent2);margin:0 0 12px}
+    .hero-desc{color:var(--muted);font-size:clamp(0.98rem, 1.2vw, 1.05rem);line-height:1.7;margin-bottom:18px}
+    .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+    .btn{padding:12px 26px;border-radius:999px;font-weight:800;cursor:pointer;border:0}
+    .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;box-shadow:0 12px 30px rgba(0,0,0,0.12)}
+    .btn-outline{background:transparent;border:2px solid rgba(0,0,0,0.06);color:var(--accent2);font-weight:700}
+
+    /* right */
+    .hero-right{flex: 0 0 clamp(var(--hero-right-min), 48%, var(--hero-right-max));max-width:52%;display:flex;align-items:center;justify-content:center;position:relative}
+    @media (max-width:980px){.hero-right{width:92%;max-width:480px}}
+
+    .owner-wrap{width:100%;max-width:var(--owner-max);aspect-ratio:1/1;position:relative;border-radius:28px;display:flex;align-items:center;justify-content:center}
+    canvas#blob, canvas#particles{position:absolute;inset:0;pointer-events:none;border-radius:24px}
+    .floating{position:absolute;z-index:2;mix-blend-mode:normal;opacity:0.95;filter:blur(6px)}
+
+    .owner-foreground{position:relative;z-index:3;display:flex;align-items:center;justify-content:center}
+    .owner-photo{width:58%;max-width:var(--owner-photo-max);min-width:var(--owner-photo-min);border-radius:20px;object-fit:contain;display:block;box-shadow:0 30px 70px rgba(5,10,8,0.12);background:transparent}
+
+    /* course card (general) */
+    .course-card{background:var(--white);border-radius:14px;padding:14px;box-shadow:var(--card-shadow);text-align:center;min-width:260px}
+    .course-thumb{width:100%;height:160px;object-fit:cover;border-radius:10px;display:block;margin-bottom:12px}
+    .course-title{font-weight:800;color:#0f1720;margin:0 0 6px}
+    .course-sub{color:var(--muted);font-weight:600;margin:0 0 12px}
+
+    /* زر الاشتراك داخل الكارت — بدون إضاءة أو شادو (solid, بسيط) */
+    .btn-sub{padding:10px 20px;border-radius:999px;background:var(--accent2);color:#fff;font-weight:800;border:0;cursor:pointer;box-shadow:none}
+
+    /* bottom course placement (above footer) */
+    .bottom-course{display:flex;justify-content:center;max-width:var(--maxW);margin:28px auto 8px;padding:0 20px;position:relative;z-index:10}
+    .bottom-course .course-card{width:var(--course-card-width);max-width:100%}
+
+    /* modal لتفاصيل الكورس */
+    .details-modal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.45);z-index:200000;opacity:0;pointer-events:none;transition:opacity .18s}
+    .details-modal.visible{opacity:1;pointer-events:auto}
+    .details-box{background:#fff;border-radius:12px;padding:20px;max-width:820px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.25);direction:rtl;text-align:right}
+    .details-box h3{margin:0 0 8px;color:var(--accent2)}
+    .details-box p{color:#222;line-height:1.6}
+    .details-features{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+    .details-close{margin-top:16px;padding:10px 14px;border-radius:10px;border:0;background:#eee;cursor:pointer}
+
+    /* about */
+    .about{margin-top:28px;background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,255,255,0.98));padding:22px;border-radius:14px;box-shadow:var(--card-shadow)}
+    .about h3{color:var(--accent2);margin:0 0 10px}
+    .features{display:flex;gap:12px;flex-wrap:wrap}
+
+    footer{margin-top:12px;text-align:center;padding:20px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:700}
+
+    .steal-modal{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.6);z-index:99999;opacity:0;pointer-events:none;transition:opacity .18s;}
+    .steal-modal.visible{opacity:1;pointer-events:auto}
+    .steal-box{background:#fff;padding:26px;border-radius:14px;max-width:420px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+    .steal-emoji{font-size:56px;margin-bottom:8px}
+    .steal-text{font-weight:800;color:#b32626;margin-bottom:8px}
+    .steal-sub{color:#333;margin-bottom:12px}
+    .steal-close{padding:8px 18px;border-radius:999px;border:0;background:var(--accent2);color:#fff;font-weight:800;cursor:pointer}
+
+    .note-protect{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
+
+    /* responsiveness tuning */
+    @media (max-width:900px){
+      :root{--hero-gap:22px;--owner-max:420px;--owner-photo-max:300px;--course-card-width:300px;}
+    }
+    @media (max-width:560px){
+      .hero-left,.hero-right{flex:1 1 100%}
+      .owner-wrap{max-width:360px}
+      .hero-title{font-size:1.8rem}
+      :root{--hero-gap:18px;--owner-photo-max:280px;--course-card-width:86%;}
+      .owner-wrap > .course-card-wrapper{bottom: -48px;}
+    }
+  </style>
 </head>
-<body class="page ready">
+<body>
 
-  <!-- particles canvas (background) -->
-  <div id="particles-js" aria-hidden="true"></div>
-
-  <!-- top bar / owner -->
-  <header class="site-header" data-aos="fade-down">
-    <div class="owner">
-      <img src="owner.jpg" alt="صورة صاحب الموقع" class="owner-photo">
-      <div class="owner-info">
-        <h1 class="site-title">د. محمد نبيل</h1>
-        <p class="site-sub">منصة الدراسات النفسية — خبرة احترافية وعملية</p>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><img src="owner.png" alt="د. محمد نبيل"></div>
+      <div>
+        <div class="title">د. محمد نبيل</div>
+        <div class="sub">منصة الدراسات النفسية</div>
       </div>
     </div>
-    <nav class="top-nav">
-      <a href="#about" class="nav-link">عن الكورس</a>
-      <a href="#subscribe" class="nav-link">اشترك الآن</a>
+
+    <nav class="top">
+      <a class="nav-link" href="#about">عن الكورس</a>
+      <!-- غيرت الرابط إلى زر عشان نتحكم في عرض التفاصيل -->
+      <button id="knowMoreBtn" class="btn btn-outline" aria-haspopup="dialog">اعرف المزيد</button>
     </nav>
   </header>
 
-  <!-- hero -->
   <main>
-    <section class="hero" id="home">
-      <div class="hero-inner" data-aos="zoom-in">
-        <div class="hero-text">
-          <h2 class="hero-title">كورس متكامل في الدراسات النفسية</h2>
-          <p class="hero-desc">
-            مسار عملي ونظري يشرح أسس العلم النفسي، التحليل النفسي، العلاج المعرفي السلوكي، وتقنيات التطبيق العملي.
-            دفعة مخصصة للممارسين وطلاب الدراسات العليا — محتوى مبسّط، أمثلة حقيقية، وتمارين تطبيقية.
-          </p>
-          <div class="hero-cta">
-            <a class="btn-primary" onclick="goToSubscribe()">اضغط للاشتراك</a>
-            <a class="btn-outline" href="#about">اعرف المزيد</a>
-          </div>
+    <section class="hero" aria-label="الصفحة الرئيسية">
+      <div class="hero-left">
+        <h1 class="hero-title">مرحباً — كورس الدراسات النفسية</h1>
+        <p class="hero-desc">دورة عملية ونظرية تغطي أدوات التقييم والعلاج. محتوى منظم، فيديوهات عالية الجودة، وملفات عمل قابلة للتنزيل للمشتركين فقط.</p>
+
+        <div class="hero-cta">
+          <button class="btn btn-primary" id="subscribeBtn">اضغط للاشتراك</button>
         </div>
 
-        <div class="hero-media" data-aos="fade-left">
-          <div class="course-card">
-            <div class="course-badge">مُصنّف: دراسات نفسية</div>
-            <img src="course.jpg" alt="صورة الكورس" class="course-image">
-            <div class="course-info">
-              <h3 class="course-name">البرنامج العملي للدراسات النفسية</h3>
-              <p class="course-short">سِلسلة فيديوهات، ملفات عمل، وشهادات حضور</p>
-            </div>
-            <div class="course-action">
-              <a class="btn-subscribe" id="subscribe-btn" onclick="goToSubscribe()">اضغط للاشتراك</a>
-            </div>
-          </div>
-        </div>
+        <p class="note-protect">ملاحظة: الصفحة تحتوي إجراءات حماية؛ لا يمكن ضمان منع تصوير الشاشة 100% — للحماية الحقيقية استخدم خدمة استضافة فيديو آمنة.</p>
       </div>
 
-      <!-- decorative animated lines -->
-      <svg class="decor-lines" viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true">
-        <path class="wave wave1" d="M0,120 C150,20 350,220 800,100 L800 200 L0 200 Z"></path>
-        <path class="wave wave2" d="M0,140 C200,40 400,240 800,120 L800 200 L0 200 Z"></path>
-      </svg>
-    </section>
+      <div class="hero-right" aria-hidden="false">
+        <div class="owner-wrap" id="ownerWrap" role="img" aria-label="صورة صاحب الكورس">
+          <!-- particles behind -->
+          <canvas id="particles"></canvas>
+          <!-- organic blob layer (green) -->
+          <canvas id="blob"></canvas>
 
-    <!-- about section -->
-    <section id="about" class="about" data-aos="fade-up">
-      <div class="container">
-        <h3>عن الكورس</h3>
-        <p>
-          هذا الكورس مقدم من د. محمد نبيل ويغطي موضوعات أساسية ومتقدمة في علم النفس:
-          المفاهيم النظرية، أدوات التقييم، دراسات حالة، وأساليب علاجية مثبتة.
-          كل محتوى مُرتَّب في وحدات قصيرة وواضحة مع مصادر ومراجع حديثة.
-        </p>
-        <ul class="features">
-          <li>▶ فيديوهات قصيرة ومركزة</li>
-          <li>▶ أوراق عمل وتمارين عملية</li>
-          <li>▶ شهادة رقمية بعد الانتهاء</li>
-        </ul>
+          <!-- floating shapes -->
+          <div class="floating" id="f1" style="left:6%;top:8%;width:80px;height:80px;border-radius:28%;background:rgba(0,168,107,0.12)"></div>
+          <div class="floating" id="f2" style="right:6%;bottom:6%;width:70px;height:70px;border-radius:36%;background:rgba(255,126,42,0.10)"></div>
+          <div class="floating" id="f3" style="left:18%;bottom:18%;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.12)"></div>
+
+          <!-- owner image (foreground) - neutral -->
+          <div class="owner-foreground">
+            <img src="owner.png" alt="صورة صاحب الكورس" class="owner-photo" id="ownerPhoto">
+          </div>
+
+          <!-- ملاحظة: حذفت الكارت من هنا -- لأن الكارت الآن موجود في آخر الصفحة -->
+        </div>
       </div>
     </section>
 
-    <!-- subscribe (login target) -->
-    <section id="subscribe" class="subscribe" data-aos="fade-up">
-      <div class="container narrow">
-        <h3>اشترك الآن</h3>
-        <p>سجل دخولك لتحصل على روابط الفيديوهات (غير مدرجة على يوتيوب)</p>
+    <section id="about" class="about" aria-label="عن الكورس">
+      <h3>عن الكورس</h3>
+      <p>هذا الكورس مقدم من د. محمد نبيل ويغطي موضوعات أساسية ومتقدمة في علم النفس: المفاهيم النظرية، أدوات التقييم، دراسات حالة، وأساليب علاج مثبتة. مناسب للممارسين وطلاب الدراسات العليا.</p>
 
-        <!-- simple login form (front-end only) -->
-        <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
-          <label>
-            اسم المستخدم
-            <input type="text" name="username" required placeholder="اسم المستخدم">
-          </label>
-          <label>
-            كلمة المرور
-            <input type="password" name="password" required placeholder="كلمة المرور">
-          </label>
-          <div class="form-actions">
-            <button type="submit" class="btn-primary">دخول</button>
-            <button type="button" class="btn-outline" onclick="demoCredentials()">تجربة سريعة</button>
-          </div>
-          <p class="login-note">* بعد تسجيل الدخول سيُفتح لك صفحة الدروس (محمية على مستوى السيرفر - هذا مثال واجهة فقط).</p>
-        </form>
+      <div class="features" aria-hidden="false">
+        <div class="feature">▶ فيديوهات مركزة قصيرة</div>
+        <div class="feature">▶ أوراق عمل وتمارين تطبيقية</div>
+        <div class="feature">▶ شهادة رقمية بعد الانتهاء</div>
       </div>
     </section>
   </main>
 
-  <!-- footer -->
-  <footer class="site-footer" data-aos="fade-up">
-    <div class="container">
-      <p>© 2025 جميع الحقوق محفوظة — د. محمد نبيل</p>
+  <!-- كارت الكورس في آخر الصفحة (فوق الفوتر مباشرة) -->
+  <div class="bottom-course" aria-hidden="false">
+    <div class="course-card" role="group" aria-label="معلومات الكورس">
+      <img src="course.jpg" alt="صورة الكورس" class="course-thumb">
+      <div class="course-title">البرنامج العملي للدراسات النفسية</div>
+      <div class="course-sub">سلسلة فيديوهات وملفات عمل</div>
+      <div class="course-action">
+        <button class="btn-sub" id="courseSubscribe">اضغط للاشتراك</button>
+      </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- scripts -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <!-- particles.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <footer>© 2025 جميع الحقوق محفوظة — د. محمد نبيل</footer>
 
-<script>
-  // init AOS
-  AOS.init({ once: true, duration: 900, easing: 'ease-out-back' });
+  <!-- مودال تفاصيل الكورس -->
+  <div class="details-modal" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
+    <div class="details-box">
+      <h3 id="detailsTitle">تفاصيل الكورس — البرنامج العملي للدراسات النفسية</h3>
+      <p>دورة مركزة تحتوي على فيديوهات عملية ونظرية، أوراق عمل قابلة للتحميل، ودعم مباشر للمشتركين. مناسبة للممارسين وطلاب الدراسات العليا.</p>
+      <div class="details-features">
+        <div>• عدد الفيديوهات: سلسة مقسمة إلى وحدات قصيرة ومركزة.</div>
+        <div>• ملفات عمل: مرفقات قابلة للطباعة والتطبيق العملي.</div>
+        <div>• شهادة رقمية معتمدة بعد إنهاء المتطلبات.</div>
+        <div>• أمثلة ودراسات حالة عملية وتطبيقات إكلينيكية.</div>
+      </div>
+      <p style="margin-top:12px;color:var(--muted)">لو حابب تشترك فورًا اضغط على "اضغط للاشتراك" تحت الكارت في أسفل الصفحة.</p>
+      <div style="text-align:left">
+        <button class="details-close" id="detailsClose">اغلق</button>
+      </div>
+    </div>
+  </div>
 
-  // particles configuration (no extra file needed)
-  particlesJS('particles-js',
-    {
-      "particles": {
-        "number": { "value": 55, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": ["#ff6600","#00a86b","#ffffff"] },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.5, "random": true },
-        "size": { "value": 4, "random": true },
-        "line_linked": { "enable": false },
-        "move": { "enable": true, "speed": 2, "direction": "none", "out_mode": "out" }
-      },
-      "interactivity": {
-        "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": false } },
-        "modes": { "repulse": { "distance": 120 } }
-      },
-      "retina_detect": true
+  <!-- Steal modal -->
+  <div class="steal-modal" id="stealModal" role="alert" aria-live="assertive" aria-modal="true">
+    <div class="steal-box" role="document">
+      <div class="steal-emoji" id="stealEmoji">😡</div>
+      <div class="steal-text" id="stealTitle">انت هتسرق ايه؟</div>
+      <div class="steal-sub" id="stealSub">غير مسموح نسخ أو تصوير المحتوى هنا.</div>
+      <button class="steal-close" id="stealClose">حسناً</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== helpers =====
+    function showStealModal(msg){
+      const modal = document.getElementById('stealModal');
+      const title = document.getElementById('stealTitle');
+      const sub = document.getElementById('stealSub');
+      title.textContent = 'انت هتسرق ايه؟';
+      sub.textContent = msg || 'غير مسموح نسخ أو تصوير المحتوى هنا.';
+      modal.classList.add('visible');
     }
-  );
+    document.getElementById('stealClose').addEventListener('click', ()=> document.getElementById('stealModal').classList.remove('visible'));
 
-  // page transition when clicking subscribe
-  function goToSubscribe() {
-    document.documentElement.classList.add('page-leave');
-    setTimeout(() => {
-      document.getElementById('subscribe').scrollIntoView({ behavior: 'smooth' });
-      document.documentElement.classList.remove('page-leave');
-    }, 600);
-  }
-
-  // demo quick-fill (for testing)
-  function demoCredentials(){
-    const form = document.getElementById('loginForm');
-    form.username.value = 'demo';
-    form.password.value = 'demo123';
-  }
-
-  // handle login (new behavior)
-  function handleLogin(e){
-    e.preventDefault();
-    const u = e.target.username.value.trim();
-    showToast('الدخول مسموح دلوقتي بس 😂 — أهلاً ' + u);
-
-    // بعد ثانيتين يفتح صفحة الكورس
-    setTimeout(()=>{
-      window.location.href = "course.html";
-    }, 2000);
-  }
-
-  // small toast
-  function showToast(msg){
-    let t = document.getElementById('app-toast');
-    if(!t){
-      t = document.createElement('div');
-      t.id = 'app-toast';
-      t.className = 'app-toast';
-      document.body.appendChild(t);
+    // show angry modal on attempts
+    function punishAttempt(reason){
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.background = 'rgba(0,0,0,0.9)';
+      overlay.style.zIndex = '99998';
+      document.body.appendChild(overlay);
+      showStealModal(reason);
+      setTimeout(()=> {
+        try { overlay.remove(); } catch(e){}
+      }, 900);
     }
-    t.textContent = msg;
-    t.classList.add('visible');
-    setTimeout(()=> t.classList.remove('visible'), 1800);
-  }
-</script>
 
+    // ===== disable right click and selection outside about =====
+    document.addEventListener('contextmenu', function(e){
+      e.preventDefault();
+      punishAttempt('منع كليك يمين — هذا محتوى مدفوع.');
+    });
 
+    document.addEventListener('selectstart', function(e){
+      if(!e.target.closest('.about')){ e.preventDefault(); punishAttempt('غير مسموح بنسخ المحتوى.'); }
+    });
+
+    // ===== keyboard protections =====
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'PrintScreen' || e.keyCode === 44){
+        try { navigator.clipboard.writeText(''); } catch(err){}
+        punishAttempt('محاولة أخذ لقطة شاشة معلومة.');
+      }
+      const blocked = (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
+                      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
+                      (e.key === 'F12');
+      if(blocked){
+        e.preventDefault();
+        punishAttempt('غير مسموح بفتح أدوات المطور أو حفظ الصفحة.');
+      }
+    });
+
+    // ===== detect devtools via resizing heuristic =====
+    (function detectDevTools(){
+      let threshold = 160;
+      let last = { open: false, time: Date.now() };
+      setInterval(function(){
+        const widthDiff = window.outerWidth - window.innerWidth;
+        const heightDiff = window.outerHeight - window.innerHeight;
+        const isOpen = widthDiff > threshold || heightDiff > threshold;
+        if(isOpen && !last.open){
+          last.open = true;
+          last.time = Date.now();
+          punishAttempt('تم كشف أدوات التطوير — هذا محتوى محمي.');
+        } else if(!isOpen){
+          last.open = false;
+        }
+      }, 800);
+    })();
+
+    // ===== visibility change (detect switching apps / screen-recorders sometimes) =====
+    document.addEventListener('visibilitychange', function(){
+      if(document.hidden){
+        const overlay = document.createElement('div');
+        overlay.style.position='fixed';overlay.style.inset='0';overlay.style.background='rgba(0,0,0,0.95)';overlay.style.zIndex='99997';
+        document.body.appendChild(overlay);
+        setTimeout(()=> overlay.remove(), 500);
+      }
+    });
+
+    // ===== Buttons behavior =====
+    document.getElementById('subscribeBtn').addEventListener('click', function(){
+      window.location.href = 'login.html';
+    });
+
+    // courseSubscribe is in bottom card
+    document.getElementById('courseSubscribe').addEventListener('click', function(){
+      window.location.href = 'login.html';
+    });
+
+    // اعرض مودال تفاصيل الكورس عند الضغط على "اعرف المزيد"
+    const knowMoreBtn = document.getElementById('knowMoreBtn');
+    const detailsModal = document.getElementById('detailsModal');
+    const detailsClose = document.getElementById('detailsClose');
+
+    knowMoreBtn.addEventListener('click', function(){
+      detailsModal.classList.add('visible');
+      // focus for accessibility
+      detailsClose.focus();
+    });
+    detailsClose.addEventListener('click', function(){ detailsModal.classList.remove('visible'); });
+
+    // اغلاق لو ضغط خارج الصندوق
+    detailsModal.addEventListener('click', function(e){
+      if(e.target === detailsModal) detailsModal.classList.remove('visible');
+    });
+
+    // السماح بزر الهروب ESC لإغلاق المودال
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        if(detailsModal.classList.contains('visible')) detailsModal.classList.remove('visible');
+        if(document.getElementById('stealModal').classList.contains('visible')) document.getElementById('stealModal').classList.remove('visible');
+      }
+    });
+
+    // ===== Canvas blob (organic green shape) =====
+    (function(){
+      const c = document.getElementById('blob');
+      const wrap = document.getElementById('ownerWrap');
+      if(!c || !wrap) return;
+      const ctx = c.getContext('2d');
+
+      function resize(){
+        const r = wrap.getBoundingClientRect();
+        c.width = Math.round(r.width);
+        c.height = Math.round(r.height);
+        c.style.width = r.width + 'px';
+        c.style.height = r.height + 'px';
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      let t = 0;
+      function draw(){
+        const w = c.width, h = c.height;
+        ctx.clearRect(0,0,w,h);
+
+        const cx = w/2, cy = h/2;
+        const base = Math.min(w,h) * 0.36;
+        ctx.beginPath();
+        const steps = 140;
+        for(let i=0;i<=steps;i++){
+          const a = (i/steps)*Math.PI*2;
+          const noise = Math.sin(a*3 + t*1.1)*18 + Math.cos(a*5 + t*0.8)*10;
+          const r = base + noise;
+          const x = cx + r*Math.cos(a);
+          const y = cy + r*Math.sin(a);
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0,0,w,h);
+        grad.addColorStop(0, 'rgba(0,168,107,0.18)');
+        grad.addColorStop(0.6, 'rgba(0,168,107,0.09)');
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.lineWidth = 1.6;
+        ctx.strokeStyle = 'rgba(0,120,80,0.12)';
+        ctx.stroke();
+
+        t += 0.014;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // ===== particles around owner =====
+    (function(){
+      const p = document.getElementById('particles');
+      const wrap = document.getElementById('ownerWrap');
+      if(!p||!wrap) return;
+      const ctx = p.getContext('2d');
+
+      function resize(){
+        const r = wrap.getBoundingClientRect();
+        p.width = Math.round(r.width);
+        p.height = Math.round(r.height);
+        p.style.width = r.width + 'px';
+        p.style.height = r.height + 'px';
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const particles = [];
+      const colors = ['rgba(0,168,107,0.95)','rgba(255,126,42,0.95)','rgba(255,255,255,0.95)'];
+      for(let i=0;i<36;i++){
+        particles.push({
+          x: Math.random()*p.width,
+          y: Math.random()*p.height,
+          r: Math.random()*3+0.8,
+          vx: (Math.random()-0.5)*0.4,
+          vy: (Math.random()-0.5)*0.4,
+          c: colors[Math.floor(Math.random()*colors.length)],
+          a: 0.5 + Math.random()*0.9
+        });
+      }
+
+      function anim(){
+        ctx.clearRect(0,0,p.width,p.height);
+        particles.forEach(pt=>{
+          pt.x += pt.vx;
+          pt.y += pt.vy;
+          if(pt.x < -10) pt.x = p.width + 10;
+          if(pt.x > p.width + 10) pt.x = -10;
+          if(pt.y < -10) pt.y = p.height + 10;
+          if(pt.y > p.height + 10) pt.y = -10;
+
+          ctx.beginPath();
+          ctx.fillStyle = pt.c.replace('0.95', pt.a.toString());
+          ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI*2);
+          ctx.fill();
+        });
+        requestAnimationFrame(anim);
+      }
+      anim();
+
+      wrap.addEventListener('mousemove', (e)=>{
+        const rect = wrap.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        particles.forEach(pt=>{
+          const dx = pt.x - mx, dy = pt.y - my;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if(d < 120){
+            pt.vx += (dx / d)*0.03;
+            pt.vy += (dy / d)*0.03;
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
