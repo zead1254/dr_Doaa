@@ -3,19 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>بوابة الكورس — دخول & فيديوهات (حماية مشددة)</title>
+  <title>بوابة الكورس — حماية قصوى (ملف واحد)</title>
 
   <!-- خط -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
 
-  <!-- ملاحظات هامة:
-       - المنع التام للسكرين شوت/الريكورد غير ممكن 100% على الويب.
-       - هذه النسخة تشدد الحماية لأقصى حد متاح بالمتصفح وتطرد الجلسة عند أي سلوك مريب.
-  -->
-
-  <!-- Content-Security-Policy (تعمل أفضل على سيرفر عبر الهيدر) -->
+  <!-- سياسات أمان (الأفضل وضعها من الهيدر على السيرفر) -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://www.youtube.com; img-src 'self' data: https://*; media-src https://*; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-src https://www.youtube.com; frame-ancestors 'none'; upgrade-insecure-requests">
-  <!-- تنبيه: Permissions-Policy و X-Frame-Options تعمل عبر الهيدر في السيرفر بشكل أدق -->
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
 
   <style>
@@ -25,6 +19,7 @@
       --orange:#ff8c00;
       --orange-2:#ffb347;
       --ink:#1d1e22;
+      --danger:#b00020;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -39,10 +34,28 @@
       user-select:none;               /* منع تحديد النص */
       -webkit-user-select:none;       /* سفاري/كروم */
       -webkit-touch-callout:none;     /* منع الضغط المطول بالهاتف */
+      touch-action: manipulation;
     }
     ::selection{background:transparent}
 
-    /* عناصر خلفية طايرة */
+    /* شريط علوي ثابت: ساعة أونلاين + زر رجوع */
+    .topbar{
+      position:fixed; inset:0 0 auto 0; height:52px; z-index:1000; display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:8px 14px; background:linear-gradient(90deg, rgba(255,255,255,.92), rgba(255,255,255,.75));
+      border-bottom:1px solid rgba(0,0,0,.06); backdrop-filter: blur(10px);
+    }
+    .topbar .brand{ display:flex; align-items:center; gap:10px; font-weight:900; color:#0a3d2d }
+    .topbar .brand .dot{ width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--green),var(--orange)) }
+    .clock{ font-weight:800; letter-spacing:.4px }
+    .btn{ appearance:none; border:0; cursor:pointer; font-weight:800; letter-spacing:.2px; border-radius:14px; padding:10px 16px; transition:.25s; position:relative; overflow:hidden }
+    .btn.ghost{ background:#fff; color:var(--green); border:2px solid #e6f3ef }
+    .btn.danger{ background:var(--danger); color:#fff }
+
+    /* Toast */
+    .toast{ position:fixed; top:64px; right:20px; padding:12px 16px; background:linear-gradient(135deg,var(--green),var(--orange)); color:#fff; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.18); opacity:0; transform:translateY(-10px) scale(.95); transition:.35s; z-index:50; font-weight:700 }
+    .toast.show{ opacity:1; transform:translateY(0) scale(1) }
+
+    /* خلفيات */
     .floaty{position:fixed; inset:0; pointer-events:none; z-index:-1}
     .blob{position:absolute; width:320px; height:320px; border-radius:50%; filter:blur(40px); opacity:.35; mix-blend-mode:multiply; animation: drift 18s linear infinite}
     .blob.g{ background:radial-gradient(circle at 30% 30%, #00a86b, transparent 60%)}
@@ -51,16 +64,12 @@
     .blob.b2{ bottom:-8%; left:-6%; animation-duration:26s }
     @keyframes drift { 0%{transform:translate(0,0) rotate(0)} 50%{transform:translate(40px,-20px) rotate(120deg)} 100%{transform:translate(0,0) rotate(360deg)} }
 
-    /* Toast */
-    .toast{ position:fixed; top:20px; right:20px; padding:12px 16px; background:linear-gradient(135deg,var(--green),var(--orange)); color:#fff; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.18); opacity:0; transform:translateY(-10px) scale(.95); transition:.35s; z-index:50; font-weight:700 }
-    .toast.show{ opacity:1; transform:translateY(0) scale(1) }
-
-    /* غلاف */
-    .shell{ min-height:100%; display:grid; place-items:center; padding:20px }
+    /* الغلاف */
+    .shell{ min-height:100vh; display:grid; place-items:center; padding:20px; padding-top:84px }
 
     /* كارت تسجيل الدخول */
     .card{
-      width:min(420px, 94vw);
+      width:min(440px, 94vw);
       background:rgba(255,255,255,.85);
       border-radius:24px;
       backdrop-filter: blur(10px);
@@ -84,10 +93,7 @@
     .input:focus{ border-color:var(--green); box-shadow:0 0 0 4px rgba(0,168,107,.12) }
 
     .actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px }
-    .btn{ appearance:none; border:0; cursor:pointer; font-weight:800; letter-spacing:.2px; border-radius:14px; padding:12px 18px; transition:.25s; position:relative; overflow:hidden }
-    .btn.primary{ color:#fff; background:linear-gradient(135deg,var(--green), var(--orange)); box-shadow: 0 10px 22px rgba(0,168,107,.25) }
-    .btn.primary:hover{ transform: translateY(-1px) }
-    .btn.ghost{ background:#fff; color:var(--green); border:2px solid #e6f3ef }
+
     .helper{ font-size:13px; color:#d01f1f; min-height:20px; margin-top:8px; font-weight:700 }
 
     .whatsapp{ display:flex; align-items:center; justify-content:center; gap:8px; margin:14px 0 8px; font-weight:800; text-decoration:none; color:#0c8f3f; padding:10px 12px; border-radius:14px; background:#eafff4; border:1px solid #bcf3d4 }
@@ -98,7 +104,7 @@
 
     /* التطبيق بعد الدخول */
     #app{ display:none; opacity:0 }
-    .app-header{ position:sticky; top:0; z-index:20; backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.75)); border-bottom:1px solid rgba(0,0,0,.06) }
+    .app-header{ position:sticky; top:52px; z-index:20; backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.75)); border-bottom:1px solid rgba(0,0,0,.06) }
     .app-header .wrap{ max-width:1100px; margin:auto; padding:12px 18px; display:flex; align-items:center; gap:12px; justify-content:space-between }
     .brand{ display:flex; align-items:center; gap:10px; font-weight:900; color:#0a3d2d }
     .brand .dot{ width:12px; height:12px; border-radius:50%; background:linear-gradient(135deg,var(--green),var(--orange)) }
@@ -116,22 +122,32 @@
 
     /* ووتارمارك متحرك: اسم المستخدم فقط */
     .wm{ pointer-events:none; position:absolute; inset:0; }
-    .tag{ position:absolute; font-weight:900; font-size: clamp(14px, 3.6vw, 22px); color: rgba(255,255,255,.85); text-shadow: 0 2px 10px rgba(0,0,0,.55); user-select:none }
+    .tag{ position:absolute; font-weight:900; font-size: clamp(14px, 3.6vw, 22px); color: rgba(255,255,255,.88); text-shadow: 0 2px 10px rgba(0,0,0,.55); user-select:none }
 
-    /* شبكة خفيفة جدًا اختياري */
-    .wm-tiles{ position:absolute; inset:0; pointer-events:none; opacity:.065; background-size:220px 120px; background-repeat:repeat; mix-blend-mode:multiply }
+    /* شبكة خفيفة جدًا */
+    .wm-tiles{ position:absolute; inset:0; pointer-events:none; opacity:.06; background-size:220px 120px; background-repeat:repeat; mix-blend-mode:multiply }
 
-    /* شاشة قفل عند الطرد */
-    .lock{ position:fixed; inset:0; background:rgba(0,0,0,.8); color:#fff; display:none; place-items:center; z-index:60 }
+    /* قفل */
+    .lock{ position:fixed; inset:0; background:rgba(0,0,0,.88); color:#fff; display:none; place-items:center; z-index:2000 }
     .lock .box{ background:#111; border:1px solid #333; padding:24px; border-radius:16px; text-align:center; max-width:380px }
 
-    /* تأثير انتقال عند النجاح */
+    /* بوابة */
     .gate{ position:fixed; inset:0; pointer-events:none; z-index:40; display:none }
     .ring{ position:absolute; inset:0; margin:auto; width:160vmax; height:160vmax; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.0) 40%, rgba(255,140,0,.28) 41%, rgba(0,168,107,.3) 43%, rgba(255,255,255,0) 46%); animation: boom .9s ease-out forwards }
     @keyframes boom{ 0%{ transform:scale(.02); opacity:1 } 100%{ transform:scale(1.1); opacity:0 } }
   </style>
 </head>
 <body>
+
+  <!-- شريط علوي: ساعة + رجوع -->
+  <div class="topbar" dir="rtl">
+    <div class="brand"><span class="dot"></span><span>منصة الكورس</span></div>
+    <div class="clock" id="clock">--:--:--</div>
+    <div style="display:flex; gap:8px; align-items:center">
+      <button class="btn ghost" id="backBtn" title="رجوع للصفحة السابقة">رجوع</button>
+      <button class="btn danger" id="panicBtn" title="خروج فوري">خروج</button>
+    </div>
+  </div>
 
   <!-- عناصر خلفية طايرة -->
   <div class="floaty" aria-hidden="true">
@@ -147,7 +163,6 @@
     <div class="box">
       <h2>🚫 تم إغلاق الجلسة</h2>
       <p id="lockMsg">لقد تم تسجيل خروجك بسبب محاولة غير مسموح بها.</p>
-      <button class="btn ghost" onclick="returnToLogin()">عودة لتسجيل الدخول</button>
     </div>
   </div>
 
@@ -163,14 +178,14 @@
       </header>
       <div class="card-body">
         <label class="label" for="u">اسم المستخدم</label>
-        <input class="input" id="u" autocomplete="username" inputmode="text" placeholder="مثال: dr2025000" />
+        <input class="input" id="u" autocomplete="username" inputmode="text" placeholder="مثال: dr2025001" />
 
         <label class="label" for="p">كلمة المرور</label>
-        <input class="input" id="p" type="password" autocomplete="current-password" placeholder="••••خد بالك الحروف كابيتال يعنى Aو ليس a••••" />
+        <input class="input" id="p" type="password" autocomplete="current-password" placeholder="••••••••" />
 
         <div class="actions">
-          <button class="btn primary" id="loginBtn">دخول</button>
-          <button class="btn ghost" id="clearBtn" title="مسح المدخلات">مسح</button>
+          <button class="btn ghost" id="clearBtn" title="مسح">مسح</button>
+          <button class="btn" style="background:linear-gradient(135deg,var(--green), var(--orange)); color:#fff; box-shadow: 0 10px 22px rgba(0,168,107,.25)" id="loginBtn">دخول</button>
         </div>
         <div class="helper" id="err"></div>
 
@@ -204,7 +219,6 @@
 
   <script>
     // ======================== إعدادات الفيديو ========================
-    // ضع حتى 10 لينكات (embed) من يوتيوب.
     const videoLinks = [
       "https://www.youtube.com/embed/VX8EPEWJVq0",
       "لينك 2",
@@ -214,112 +228,110 @@
 
     // ======================== قائمة المستخدمين ========================
     const users = [
-  { username: "dr2025001", password: "QK472" },
-  { username: "dr2025002", password: "HB915" },
-  { username: "dr2025003", password: "MT648" },
-  { username: "dr2025004", password: "ZW183" },
-  { username: "dr2025005", password: "LC592" },
-  { username: "dr2025006", password: "FD706" },
-  { username: "dr2025007", password: "AX354" },
-  { username: "dr2025008", password: "VE801" },
-  { username: "dr2025009", password: "JP627" },
-  { username: "dr2025010", password: "RY548" },
-  { username: "dr2025011", password: "NU269" },
-  { username: "dr2025012", password: "TB940" },
-  { username: "dr2025013", password: "GK731" },
-  { username: "dr2025014", password: "WM825" },
-  { username: "dr2025015", password: "CQ174" },
-  { username: "dr2025016", password: "SZ396" },
-  { username: "dr2025017", password: "PH209" },
-  { username: "dr2025018", password: "OV651" },
-  { username: "dr2025019", password: "EY384" },
-  { username: "dr2025020", password: "BJ972" },
-  { username: "dr2025021", password: "LF103" },
-  { username: "dr2025022", password: "KI854" },
-  { username: "dr2025023", password: "MX427" },
-  { username: "dr2025024", password: "HD769" },
-  { username: "dr2025025", password: "QG295" },
-  { username: "dr2025026", password: "RN618" },
-  { username: "dr2025027", password: "ZW587" },
-  { username: "dr2025028", password: "YS230" },
-  { username: "dr2025029", password: "AJ953" },
-  { username: "dr2025030", password: "UC467" },
-  { username: "dr2025031", password: "TE982" },
-  { username: "dr2025032", password: "BL719" },
-  { username: "dr2025033", password: "VP306" },
-  { username: "dr2025034", password: "OS840" },
-  { username: "dr2025035", password: "XR594" },
-  { username: "dr2025036", password: "DW718" },
-  { username: "dr2025037", password: "MC285" },
-  { username: "dr2025038", password: "HQ964" },
-  { username: "dr2025039", password: "NY431" },
-  { username: "dr2025040", password: "FB609" },
-  { username: "dr2025041", password: "LS284" },
-  { username: "dr2025042", password: "PU719" },
-  { username: "dr2025043", password: "ZC517" },
-  { username: "dr2025044", password: "KM402" },
-  { username: "dr2025045", password: "YG835" },
-  { username: "dr2025046", password: "AD790" },
-  { username: "dr2025047", password: "RJ652" },
-  { username: "dr2025048", password: "VH291" },
-  { username: "dr2025049", password: "OE547" },
-  { username: "dr2025050", password: "TI386" },
-  { username: "dr2025051", password: "CN482" },
-  { username: "dr2025052", password: "QZ178" },
-  { username: "dr2025053", password: "WS690" },
-  { username: "dr2025054", password: "ML520" },
-  { username: "dr2025055", password: "PX947" },
-  { username: "dr2025056", password: "FV613" },
-  { username: "dr2025057", password: "GE294" },
-  { username: "dr2025058", password: "BY740" },
-  { username: "dr2025059", password: "HU835" },
-  { username: "dr2025060", password: "AK507" },
-  { username: "dr2025061", password: "XQ392" },
-  { username: "dr2025062", password: "ZL681" },
-  { username: "dr2025063", password: "DR158" },
-  { username: "dr2025064", password: "OE473" },
-  { username: "dr2025065", password: "SJ594" },
-  { username: "dr2025066", password: "KF819" },
-  { username: "dr2025067", password: "UL280" },
-  { username: "dr2025068", password: "PQ967" },
-  { username: "dr2025069", password: "VR136" },
-  { username: "dr2025070", password: "NW548" },
-  { username: "dr2025071", password: "HZ209" },
-  { username: "dr2025072", password: "CG874" },
-  { username: "dr2025073", password: "LB705" },
-  { username: "dr2025074", password: "TP491" },
-  { username: "dr2025075", password: "EJ602" },
-  { username: "dr2025076", password: "MY253" },
-  { username: "dr2025077", password: "FS980" },
-  { username: "dr2025078", password: "QO178" },
-  { username: "dr2025079", password: "VK320" },
-  { username: "dr2025080", password: "AI695" },
-  { username: "dr2025081", password: "ZR586" },
-  { username: "dr2025082", password: "DY403" },
-  { username: "dr2025083", password: "GW217" },
-  { username: "dr2025084", password: "XT950" },
-  { username: "dr2025085", password: "JE184" },
-  { username: "dr2025086", password: "UC729" },
-  { username: "dr2025087", password: "PM604" },
-  { username: "dr2025088", password: "KV315" },
-  { username: "dr2025089", password: "RX890" },
-  { username: "dr2025090", password: "BQ278" },
-  { username: "dr2025091", password: "NH542" },
-  { username: "dr2025092", password: "LV631" },
-  { username: "dr2025093", password: "SW907" },
-  { username: "dr2025094", password: "EA756" },
-  { username: "dr2025095", password: "YM428" },
-  { username: "dr2025096", password: "ZT903" },
-  { username: "dr2025097", password: "DG547" },
-  { username: "dr2025098", password: "KU362" },
-  { username: "dr2025099", password: "HP690" },
-  { username: "dr2025100", password: "OF284" }
-];
-
+      { username: "dr2025001", password: "QK472" },
+      { username: "dr2025002", password: "HB915" },
+      { username: "dr2025003", password: "MT648" },
+      { username: "dr2025004", password: "ZW183" },
+      { username: "dr2025005", password: "LC592" },
+      { username: "dr2025006", password: "FD706" },
+      { username: "dr2025007", password: "AX354" },
+      { username: "dr2025008", password: "VE801" },
+      { username: "dr2025009", password: "JP627" },
+      { username: "dr2025010", password: "RY548" },
+      { username: "dr2025011", password: "NU269" },
+      { username: "dr2025012", password: "TB940" },
+      { username: "dr2025013", password: "GK731" },
+      { username: "dr2025014", password: "WM825" },
+      { username: "dr2025015", password: "CQ174" },
+      { username: "dr2025016", password: "SZ396" },
+      { username: "dr2025017", password: "PH209" },
+      { username: "dr2025018", password: "OV651" },
+      { username: "dr2025019", password: "EY384" },
+      { username: "dr2025020", password: "BJ972" },
+      { username: "dr2025021", password: "LF103" },
+      { username: "dr2025022", password: "KI854" },
+      { username: "dr2025023", password: "MX427" },
+      { username: "dr2025024", password: "HD769" },
+      { username: "dr2025025", password: "QG295" },
+      { username: "dr2025026", password: "RN618" },
+      { username: "dr2025027", password: "ZW587" },
+      { username: "dr2025028", password: "YS230" },
+      { username: "dr2025029", password: "AJ953" },
+      { username: "dr2025030", password: "UC467" },
+      { username: "dr2025031", password: "TE982" },
+      { username: "dr2025032", password: "BL719" },
+      { username: "dr2025033", password: "VP306" },
+      { username: "dr2025034", password: "OS840" },
+      { username: "dr2025035", password: "XR594" },
+      { username: "dr2025036", password: "DW718" },
+      { username: "dr2025037", password: "MC285" },
+      { username: "dr2025038", password: "HQ964" },
+      { username: "dr2025039", password: "NY431" },
+      { username: "dr2025040", password: "FB609" },
+      { username: "dr2025041", password: "LS284" },
+      { username: "dr2025042", password: "PU719" },
+      { username: "dr2025043", password: "ZC517" },
+      { username: "dr2025044", password: "KM402" },
+      { username: "dr2025045", password: "YG835" },
+      { username: "dr2025046", password: "AD790" },
+      { username: "dr2025047", password: "RJ652" },
+      { username: "dr2025048", password: "VH291" },
+      { username: "dr2025049", password: "OE547" },
+      { username: "dr2025050", password: "TI386" },
+      { username: "dr2025051", password: "CN482" },
+      { username: "dr2025052", password: "QZ178" },
+      { username: "dr2025053", password: "WS690" },
+      { username: "dr2025054", password: "ML520" },
+      { username: "dr2025055", password: "PX947" },
+      { username: "dr2025056", password: "FV613" },
+      { username: "dr2025057", password: "GE294" },
+      { username: "dr2025058", password: "BY740" },
+      { username: "dr2025059", password: "HU835" },
+      { username: "dr2025060", password: "AK507" },
+      { username: "dr2025061", password: "XQ392" },
+      { username: "dr2025062", password: "ZL681" },
+      { username: "dr2025063", password: "DR158" },
+      { username: "dr2025064", password: "OE473" },
+      { username: "dr2025065", password: "SJ594" },
+      { username: "dr2025066", password: "KF819" },
+      { username: "dr2025067", password: "UL280" },
+      { username: "dr2025068", password: "PQ967" },
+      { username: "dr2025069", password: "VR136" },
+      { username: "dr2025070", password: "NW548" },
+      { username: "dr2025071", password: "HZ209" },
+      { username: "dr2025072", password: "CG874" },
+      { username: "dr2025073", password: "LB705" },
+      { username: "dr2025074", password: "TP491" },
+      { username: "dr2025075", password: "EJ602" },
+      { username: "dr2025076", password: "MY253" },
+      { username: "dr2025077", password: "FS980" },
+      { username: "dr2025078", password: "QO178" },
+      { username: "dr2025079", password: "VK320" },
+      { username: "dr2025080", password: "AI695" },
+      { username: "dr2025081", password: "ZR586" },
+      { username: "dr2025082", password: "DY403" },
+      { username: "dr2025083", password: "GW217" },
+      { username: "dr2025084", password: "XT950" },
+      { username: "dr2025085", password: "JE184" },
+      { username: "dr2025086", password: "UC729" },
+      { username: "dr2025087", password: "PM604" },
+      { username: "dr2025088", password: "KV315" },
+      { username: "dr2025089", password: "RX890" },
+      { username: "dr2025090", password: "BQ278" },
+      { username: "dr2025091", password: "NH542" },
+      { username: "dr2025092", password: "LV631" },
+      { username: "dr2025093", password: "SW907" },
+      { username: "dr2025094", password: "EA756" },
+      { username: "dr2025095", password: "YM428" },
+      { username: "dr2025096", password: "ZT903" },
+      { username: "dr2025097", password: "DG547" },
+      { username: "dr2025098", password: "KU362" },
+      { username: "dr2025099", password: "HP690" },
+      { username: "dr2025100", password: "OF284" }
+    ];
 
     // ======================== حالة الجلسة ========================
     let currentUser = null;
-    let suspiciousCount = 0;
 
     const qs = (s,p=document)=>p.querySelector(s);
     const qsa = (s,p=document)=>[...p.querySelectorAll(s)];
@@ -357,6 +369,17 @@
 
     function validate(u,p){ return users.some(x=> x.username===u && x.password===p ); }
 
+    // خروج فوري (أقصى ما يسمح به المتصفح)
+    function hardExit(reason){
+      try{ localStorage.clear(); sessionStorage.clear(); }catch(_){ }
+      try{ document.body.innerHTML=''; }catch(_){ }
+      try{ window.stop(); }catch(_){ }
+      try{ window.open('', '_self'); window.close(); }catch(_){ }
+      try{ location.replace('about:blank'); }catch(_){ }
+      const lock = qs('#lock'); if(lock){ qs('#lockMsg').textContent = reason || 'تم إنهاء الجلسة.'; lock.style.display='grid'; }
+      setTimeout(()=>{ try{ document.documentElement.innerHTML=''; }catch(_){ } }, 200);
+    }
+
     function forceLogout(msg){
       currentUser=null;
       qs('#who').textContent='';
@@ -364,16 +387,30 @@
       qs('#login').style.display='grid';
       qs('#u').value=''; qs('#p').value='';
       const lock = qs('#lock'); qs('#lockMsg').textContent = msg || 'تم إنهاء الجلسة.'; lock.style.display='grid';
-      setTimeout(()=> lock.style.display='none', 2600);
+      setTimeout(()=> lock.style.display='none', 2000);
     }
     function returnToLogin(){ qs('#lock').style.display='none'; }
+
+    // شريط علوي: الساعة + أزرار
+    (function initClock(){
+      const el = qs('#clock');
+      const pad = n=> String(n).padStart(2,'0');
+      setInterval(()=>{
+        const d = new Date();
+        const s = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        el.textContent = s;
+      }, 250);
+    })();
+
+    qs('#backBtn').addEventListener('click', ()=>{ try{ history.back(); }catch(_){ location.href='about:blank'; } });
+    qs('#panicBtn').addEventListener('click', ()=> hardExit('🚫 تم الخروج'));
 
     // تسجيل الدخول
     qs('#loginBtn').addEventListener('click', ()=>{
       const u = qs('#u').value.trim();
       const p = qs('#p').value.trim();
       if(!u || !p){ qs('#err').textContent='من فضلك أدخل البيانات كاملة'; return; }
-      if(!/^dr2025\d{3}$/i.test(u)){ qs('#err').textContent='صيغة اسم المستخدم يجب أن تكون مثل: dr2025001'; return; }
+      if(!/^dr2025\d{3}$/i.test(u)){ qs('#err').textContent='الصيغة يجب أن تكون مثل: dr2025001'; return; }
       if(!validate(u,p)){ qs('#err').textContent='❌ اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
       qs('#err').textContent='';
       currentUser = u; qs('#who').textContent = `مرحبًا، ${u}`;
@@ -393,54 +430,70 @@
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'users-dr2025.csv'; document.body.appendChild(a); a.click(); a.remove();
     });
 
-    // ======================== حماية مشددة ========================
-    const ANGRY = '😡 محاولة غير مسموح بها — تم تسجيل خروجك.';
+    // ======================== حماية قصوى ========================
+    const ANGRY = '😡 محاولة غير مسموح بها — تم إغلاق المتصفح.';
 
     // منع القائمة اليمنى
-    document.addEventListener('contextmenu', (e)=>{ e.preventDefault(); if(currentUser) forceLogout(ANGRY + '\n(كليك يمين)'); return false; });
+    document.addEventListener('contextmenu', (e)=>{ e.preventDefault(); hardExit(ANGRY + '\n(كليك يمين)'); return false; }, true);
 
-    // منع السحب/الإفلات + بداية تحديد
+    // منع سحب/إفلات + تحديد + نسخ/قص/لصق
     document.addEventListener('dragstart', e=> e.preventDefault());
-    ['selectstart','copy','cut','paste'].forEach(ev=> document.addEventListener(ev, (e)=>{ e.preventDefault(); if(currentUser) forceLogout(ANGRY + ` (${ev})`); }));
+    ['selectstart','copy','cut','paste'].forEach(ev=> document.addEventListener(ev, (e)=>{ e.preventDefault(); hardExit(ANGRY + ` (${ev})`); }, true));
 
-    // منع اختصارات شائعة + طباعة + عرض المصدر + أدوات المطور
+    // منع اختصارات شائعة + أدوات المطور + برنت سكرين
     document.addEventListener('keydown', (e)=>{
-      const k = e.key; const ctrl = e.ctrlKey||e.metaKey; const sh=e.shiftKey;
-      const bad = (ctrl && ['c','s','u','p','x','a'].includes(k.toLowerCase())) || (ctrl && sh && ['i','j','c'].includes(k.toLowerCase())) || k === 'F12' || k === 'PrintScreen';
-      if(bad){ e.preventDefault(); e.stopPropagation(); if(currentUser) forceLogout(ANGRY + `\n(مفتاح ${k})`); }
+      const k = e.key; const ctrl = e.ctrlKey||e.metaKey; const sh=e.shiftKey; const alt=e.altKey;
+      const list = ['s','u','p','c','x','a'];
+      const dev = ['i','j','c'];
+      const bad = (ctrl && list.includes(k.toLowerCase())) || (ctrl && sh && dev.includes(k.toLowerCase())) || k === 'F12' || k === 'PrintScreen' || (ctrl && k.toLowerCase()==='\u0000');
+      if(bad){ e.preventDefault(); e.stopPropagation(); hardExit(ANGRY + `\n(مفتاح ${k})`); }
+      // Ctrl+Shift+R (تفريغ كاش) —
+      if(ctrl && sh && (k.toUpperCase()==='R')){ e.preventDefault(); e.stopPropagation(); hardExit(ANGRY + ' (إعادة تحميل قسرية)'); }
     }, true);
-    window.onbeforeprint = ()=>{ if(currentUser) forceLogout(ANGRY + ' (طباعة)') };
+    window.onbeforeprint = ()=> hardExit(ANGRY + ' (طباعة)');
 
-    // كشف فتح أدوات المطور (عدة طرق تقريبية)
-    let devCheck = setInterval(()=>{
-      const bigGap = (window.outerWidth - window.innerWidth) > 160 || (window.outerHeight - window.innerHeight) > 160;
-      if(bigGap){ if(currentUser) forceLogout(ANGRY + ' (DevTools)'); return; }
-      // طريقة كونسول
-      const el = { get id(){ if(currentUser) forceLogout(ANGRY + ' (Console Open)'); } };
-      try{ console.log(el); }catch(_){/* لا شيء */}
-    }, 1200);
+    // كشف فتح أدوات المطور (عدة طرق):
+    (function devtoolsTrap(){
+      // فرق الأبعاد
+      const checkGaps = ()=> (window.outerWidth - window.innerWidth) > 160 || (window.outerHeight - window.innerHeight) > 160;
+      // كائن بجتر في الكونسول
+      const bait = { get id(){ hardExit(ANGRY + ' (Console Open)'); } };
+      setInterval(()=>{ if(checkGaps()) hardExit(ANGRY + ' (DevTools)'); try{ console.log(bait); }catch(_){} }, 900);
+      // قياس زمن debugger
+      setInterval(()=>{ const t = performance.now(); debugger; if(performance.now() - t > 50) hardExit(ANGRY + ' (Break)'); }, 1500);
+    })();
 
-    // قفل عند فقدان التركيز/الاختفاء (علامة التقاط شاشة)
-    document.addEventListener('visibilitychange', ()=>{ if(document.hidden && currentUser){ forceLogout(ANGRY + ' (خروج من الصفحة/تصوير)'); } });
-    window.addEventListener('blur', ()=>{ if(currentUser){ forceLogout(ANGRY + ' (فقدان تركيز)'); } });
+    // محاولة رصد سكرين شوت/ريكورد:
+    // 1) فقدان التركيز أو إخفاء الصفحة
+    document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ hardExit(ANGRY + ' (إخفاء التبويب)'); } });
+    window.addEventListener('blur', ()=> hardExit(ANGRY + ' (فقدان تركيز)'));
 
-    // منع تشغيل الفيديو في الخلفية (لو حصل تبويب مخفي)
-    document.addEventListener('visibilitychange', ()=>{
-      if(document.hidden){ qsa('iframe').forEach(f=>{ try{ f.contentWindow.postMessage(JSON.stringify({ event:'command', func:'pauseVideo', args:'' }), '*'); }catch(_){ /* قد تمنع السياسة */ } }); }
-    });
+    // 2) التلاعب بالأبعاد بشكل كبير (دخول مسجّل شاشة/تغيير مفاجئ)
+    (function sizeProbe(){
+      let w = window.innerWidth, h = window.innerHeight;
+      setInterval(()=>{
+        const dw = Math.abs(window.innerWidth - w);
+        const dh = Math.abs(window.innerHeight - h);
+        if(dw>220 || dh>220) hardExit(ANGRY + ' (تبديل شاشة/تسجيل محتمل)');
+        w = window.innerWidth; h = window.innerHeight;
+      }, 1200);
+    })();
 
-    // محاولة بدائية لرصد تصوير الشاشة بالهواتف (تغيير مفاجئ للـ viewport)
-    let lastW = window.innerWidth, lastH = window.innerHeight;
-    setInterval(()=>{
-      const dw = Math.abs(window.innerWidth - lastW);
-      const dh = Math.abs(window.innerHeight - lastH);
-      lastW = window.innerWidth; lastH = window.innerHeight;
-      if(currentUser && (dw>200 || dh>200)){
-        // دوران/بدء تسجيل غالبًا يغيّر الأبعاد بشدة
-        suspiciousCount++;
-        if(suspiciousCount>=1) forceLogout(ANGRY + ' (تبديل شاشة/تسجيل محتمل)');
+    // 3) محاولة مسح لقطة الشاشة عبر تفريغ الكليب بورد (بعض المتصفحات)
+    document.addEventListener('keyup', async (e)=>{
+      if(e.key === 'PrintScreen'){
+        try{ await navigator.clipboard.writeText(''); }catch(_){ }
+        hardExit(ANGRY + ' (PrintScreen)');
       }
-    }, 1500);
+    }, true);
+
+    // 4) منع Picture-in-Picture
+    document.addEventListener('enterpictureinpicture', ()=> hardExit(ANGRY + ' (PiP)'));
+
+    // عند النقر الأول اطلب ملء الشاشة (اختياري لزيادة إحكام المشاهدة)
+    document.addEventListener('click', ()=>{
+      const root = document.documentElement; if(!document.fullscreenElement && root.requestFullscreen){ root.requestFullscreen().catch(()=>{}); }
+    }, { once:true });
 
     // ======================== ووتارمارك باسم المستخدم فقط ========================
     function startFloatingWM(el){
@@ -448,7 +501,6 @@
       const parent = el.parentElement; // .wm
       const move = ()=>{
         const p = parent.getBoundingClientRect();
-        // هوامش حتى لا يخرج النص خارج الفيديو
         const pad = 40;
         const x = Math.random() * (p.width - pad*2) + pad;
         const y = Math.random() * (p.height - pad*2) + pad;
@@ -456,19 +508,20 @@
         el.style.opacity = String(0.75 + Math.random()*0.2);
       };
       move();
-      setInterval(move, 2200 + Math.random()*1200);
+      setInterval(move, 2000 + Math.random()*1200);
     }
 
-    // ======================== نصائح تشغيل آمن ========================
-    // إجبار وضع ملء الشاشة عند تشغيل أي فيديو لتقليل احتمالات التقاط سطح المكتب (اختياري)
-    document.addEventListener('click', ()=>{
-      if(!document.fullscreenElement){
-        const root = document.documentElement; if(root.requestFullscreen){ root.requestFullscreen().catch(()=>{}); }
-      }
-    }, { once:true });
+    // ======================== منع التوسع على الكود ========================
+    // تعطيل أخطاء واضحة في الكونسول
+    window.addEventListener('error', e=>{ e.preventDefault(); return true; });
+    window.addEventListener('unhandledrejection', e=>{ e.preventDefault(); return true; });
 
-    // منع الاختصارات داخل الصفحة بشكل عام
-    window.addEventListener('contextmenu', e=> e.preventDefault(), true);
+    // محاولة إخفاء سلاسل حساسة بسيطة (Obfuscation خفيفة)
+    // ملاحظة: للحماية الأعلى استخدم Obfuscator أثناء البناء.
+    (function(){
+      const _0x = (s,k)=> atob(s).split('').map((c,i)=> String.fromCharCode(c.charCodeAt(0) ^ (k.charCodeAt(i%k.length)))).join('');
+      // مثال لاستخدامها عند الحاجة.
+    })();
   </script>
 </body>
 </html>
