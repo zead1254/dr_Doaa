@@ -1,244 +1,176 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>بوابة الكورس — دخول & فيديوهات | حماية قصوى + ساعة</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>بوابة الكورس — فيديوهات (حماية قصوى)</title>
 
-<!-- خط -->
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
+<!-- Cairo font -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 
-<!-- CSP و Permissions-Policy (يفضّل تفعيلهم من السيرفر للهيدر) -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; media-src 'self' blob: data:; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; upgrade-insecure-requests">
+<!-- (يفضّل ضبط CSP/Permissions في هيدر السيرفر لو تقدر) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; media-src 'self' blob: data:; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), autoplay=(), screen-wake-lock=()">
 
 <style>
   :root{
-    --ink:#0b1620;
-    --bg:#0a0f14;
-    --card:#0e151d;
-    --muted:#8aa0b4;
-    --brand1:#00d38f; /* أخضر فيروزي */
-    --brand2:#ff8c00; /* برتقالي */
-    --accent:#59afff; /* أزرق خفيف */
+    --bg:#071017;
+    --card:#0e1620;
+    --muted:#9ab6c6;
+    --accent1:#00d38f;
+    --accent2:#ff8c00;
+    --max-width:1100px;
+    --yt-width: min(var(--max-width), 96vw);
+    --yt-height: calc(var(--yt-width) * 9 / 16);
+    --glass: rgba(255,255,255,0.03);
   }
-
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0;
-    font-family:'Cairo',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
-    background: radial-gradient(1200px 800px at 10% -20%, rgba(0,211,143,.12), transparent 60%),
-                radial-gradient(900px 600px at 110% 120%, rgba(255,140,0,.12), transparent 55%),
-                linear-gradient(180deg,#0b1117 0%, #0a0f14 45%, #0a0f14 100%);
-    color:#e9f3fb;
-    overflow-x:hidden;
-    user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
-  }
-  ::selection{background:transparent}
-
-  /* شريط علوي */
-  .topbar{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
-    background:linear-gradient(180deg, rgba(15,22,30,.85), rgba(15,22,30,.65));
-    border-bottom:1px solid rgba(255,255,255,.06);
-  }
-  .topwrap{max-width:1250px; margin:auto; padding:10px 16px; display:flex; align-items:center; gap:10px; justify-content:space-between}
-  .brand{display:flex; align-items:center; gap:12px; font-weight:900}
-  .brand .dot{width:12px; height:12px; border-radius:50%; background:linear-gradient(135deg,var(--brand1),var(--brand2)); box-shadow:0 0 12px rgba(0,211,143,.8)}
-  .brand span{letter-spacing:.3px}
-  .clock{font-weight:900; min-width:184px; text-align:center; color:#cde3f7}
-  .actionsbar{display:flex; align-items:center; gap:8px}
-  .btn{appearance:none; border:0; cursor:pointer; font-weight:800; letter-spacing:.2px; border-radius:12px; padding:10px 14px; transition:.25s}
-  .btn.ghost{background:#101a23; color:#dff3ff; border:2px solid rgba(255,255,255,.08)}
-  .btn.ghost:hover{transform:translateY(-1px)}
-  .btn.primary{color:#052013; background:linear-gradient(135deg,var(--brand1), var(--brand2)); box-shadow:0 8px 24px rgba(0,211,143,.22)}
-  .btn.primary:hover{transform:translateY(-1px)}
-
-  /* Toast */
-  .toast{position:fixed; top:18px; right:18px; padding:12px 16px;
-    background:linear-gradient(135deg,var(--brand1),var(--brand2));
-    color:#02110a; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.35);
-    opacity:0; transform:translateY(-10px) scale(.95); transition:.35s; z-index:60; font-weight:900}
-  .toast.show{opacity:1; transform:translateY(0) scale(1)}
-
-  /* حبيبات طايرة (كانفاس) */
-  .stars{position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.7}
-  .floaty{position:fixed; inset:0; pointer-events:none; z-index:1}
-  .orb{position:absolute; width:360px; height:360px; border-radius:50%; filter:blur(40px); opacity:.25; mix-blend-mode:screen; animation:drift 24s linear infinite}
-  .orb.g{background:radial-gradient(circle at 30% 30%, var(--brand1), transparent 60%)}
-  .orb.o{background:radial-gradient(circle at 70% 70%, var(--brand2), transparent 60%)}
-  .orb.b{background:radial-gradient(circle at 40% 40%, var(--accent), transparent 60%)}
-  .orb.p1{top:8%; right:-8%; animation-duration:28s}
-  .orb.p2{bottom:-12%; left:-6%; animation-duration:32s}
-  .orb.p3{top:36%; left:30%; animation-duration:38s}
-  @keyframes drift{0%{transform:translate(0,0) rotate(0)} 50%{transform:translate(48px,-24px) rotate(120deg)} 100%{transform:translate(0,0) rotate(360deg)}}
-
-  /* شاشة/كروت */
-  .shell{min-height:100%; display:grid; place-items:center; padding:24px; position:relative; z-index:2}
-  .card{
-    width:min(480px, 96vw);
-    background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    border-radius:22px; backdrop-filter:blur(14px);
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
-    overflow:hidden; transform:translateY(10px); animation:pop .7s cubic-bezier(.2,.9,.2,1) .1s forwards
-  }
-  @keyframes pop{to{transform:none}}
-  .card-head{position:relative; padding:26px 24px 18px; text-align:center; color:#e9f3fb;
+    margin:0; font-family:'Cairo',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
     background:
-      radial-gradient(220px 220px at 8% 0%, rgba(0,211,143,.25),transparent 60%),
-      radial-gradient(220px 220px at 92% 0%, rgba(255,140,0,.25),transparent 60%),
-      linear-gradient(180deg, #131c27, #0f1720);
-    border-bottom:1px solid rgba(255,255,255,.06)
+      radial-gradient(800px 500px at 10% -20%, rgba(0,211,143,.06), transparent 40%),
+      radial-gradient(600px 400px at 110% 120%, rgba(255,140,0,.04), transparent 40%),
+      linear-gradient(180deg,#071018 0%, #071018 100%);
+    color:#e6f6ff; -webkit-font-smoothing:antialiased;
+    -webkit-user-select:none; user-select:none;
   }
-  .card-head h1{margin:0; font-size:clamp(20px,3.8vw,28px); font-weight:900; letter-spacing:.3px}
-  .card-head p{margin:.35rem 0 0; opacity:.9; font-weight:700; color:#b9d1e6}
-  .ribbons{position:absolute; inset:auto 0 -18px 0; height:36px; display:flex; gap:6px; justify-content:center; filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
-  .rib{width:88px; height:36px; border-radius:10px; background:linear-gradient(135deg,#101a23,#0d141c); border:1px solid rgba(255,255,255,.06); transform:skewX(-18deg)}
 
-  .card-body{padding:22px}
-  .label{font-size:14px; font-weight:800; color:#bfe8ff; margin-bottom:6px; display:block}
-  .input{
-    width:100%; padding:14px 14px; border-radius:14px; border:2px solid rgba(255,255,255,.08);
-    outline:none; background:#0e151d; color:#dff3ff; font-size:16px; transition:.25s; user-select:auto; -webkit-user-select:auto;
-    box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)
+  /* topbar */
+  .topbar{position:sticky;top:0;z-index:80;background:linear-gradient(180deg, rgba(4,10,14,.85), rgba(4,8,12,.72));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03)}
+  .topwrap{max-width:var(--max-width);margin:auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:900}
+  .brand .dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 6px 24px rgba(0,211,143,.08)}
+  .clock{font-weight:900;color:#bfdef0;min-width:150px;text-align:center}
+  .actionsbar{display:flex;gap:8px}
+  .btn{appearance:none;border:0;padding:8px 12px;border-radius:10px;font-weight:800;cursor:pointer}
+  .btn.ghost{background:transparent;color:#dff3ff;border:1px solid rgba(255,255,255,.04)}
+  .btn.primary{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#062018}
+
+  /* toast */
+  .toast{position:fixed;top:18px;right:18px;padding:10px 14px;border-radius:12px;font-weight:900;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#052018;z-index:120;box-shadow:0 12px 40px rgba(0,0,0,.6);opacity:0;transform:translateY(-8px);transition:.35s}
+  .toast.show{opacity:1;transform:none}
+
+  /* layout */
+  .container{max-width:var(--max-width);margin:20px auto;padding:0 16px}
+  .header-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .who{font-weight:900;color:#dff6ff}
+  .muted{color:var(--muted);font-weight:700;opacity:.9}
+
+  /* login card */
+  .center-card{display:grid;place-items:center;padding:28px}
+  .card{width:min(720px,96vw);background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));border-radius:14px;padding:22px;border:1px solid rgba(255,255,255,.04);box-shadow:0 18px 60px rgba(0,0,0,.6)}
+  .card-head{display:flex;flex-direction:column;gap:6px;margin-bottom:6px;text-align:center}
+  .card-head h1{margin:0;font-size:20px;font-weight:900}
+  .inputs{display:flex;gap:10px;flex-direction:column;margin-top:12px}
+  .input{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:#07131a;color:#e9fbff;outline:none;font-size:15px}
+
+  /* motivation */
+  .motivation{position:sticky;top:56px;z-index:60;background:linear-gradient(90deg, rgba(0,211,143,.02), rgba(255,140,0,.02));border-bottom:1px dashed rgba(255,255,255,.03)}
+  .motivation .wrap{max-width:var(--max-width);margin:auto;padding:10px 16px;text-align:center;font-weight:900;color:#cfe6fb}
+  .fade{opacity:0;transform:translateY(-6px);transition:.35s}
+  .fade.show{opacity:1;transform:none}
+
+  /* videos list (stacked like youtube) */
+  #videos{display:flex;flex-direction:column;gap:26px;align-items:center;margin-top:18px}
+  .vcard{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .vhead{width:100%;max-width:var(--yt-width);display:flex;justify-content:space-between;align-items:center;padding:6px 8px;color:#dff7ff;font-weight:900}
+  .vplayer{position:relative;width:100%;max-width:var(--yt-width);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.03);background:#000}
+  .video{width:100%;height:var(--yt-height);background:#000;display:block;object-fit:contain}
+  .controls{display:flex;justify-content:space-between;align-items:center;padding:10px;background:linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,.005))}
+  .cbtn{background:transparent;border:1px solid rgba(255,255,255,.04);padding:8px 10px;border-radius:8px;color:#dff3ff;font-weight:900;cursor:pointer}
+
+  /* watermark overlay */
+  .wm{pointer-events:none;position:absolute;inset:0;z-index:14}
+  .wm .tag{position:absolute;right:12px;bottom:10px;font-weight:900;font-size:13px;color:rgba(255,255,255,.92);text-shadow:0 2px 8px rgba(0,0,0,.6);opacity:.9}
+  .wm .stamp{position:absolute;left:12px;bottom:10px;font-weight:700;font-size:12px;color:rgba(255,255,255,.75)}
+
+  /* lock overlay */
+  .lock{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;place-items:center;z-index:200}
+  .lock .box{background:linear-gradient(180deg,#07131a,#091820);padding:28px;border-radius:12px;border:1px solid #15303a;color:#fff;text-align:center;max-width:520px}
+
+  /* reveal animation */
+  .reveal{opacity:0;transform:translateY(18px);transition:all .55s cubic-bezier(.2,.9,.2,1)}
+  .reveal.visible{opacity:1;transform:none}
+
+  /* responsive */
+  @media (max-width:760px){
+    :root{--yt-width: calc(100vw - 32px); --yt-height: calc(var(--yt-width) * 9 / 16)}
+    .card{width:calc(100vw - 32px)}
   }
-  .input:focus{ border-color:var(--brand1); box-shadow:0 0 0 4px rgba(0,211,143,.12)}
-  .actions{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px}
-  .helper{font-size:13px; color:#ff6969; min-height:20px; margin-top:8px; font-weight:800}
-
-  /* التطبيق */
-  #app{display:none; opacity:0}
-  .app-content{max-width:1250px; margin:18px auto 60px; padding:0 16px}
-  .hdr-line{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px}
-  .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:16px}
-  .col{grid-column:span 12}
-  @media (min-width:760px){ .col{grid-column:span 6} }
-  @media (min-width:1180px){ .col{grid-column:span 4} }
-
-  .vcard{position:relative; border-radius:18px; overflow:hidden; background:linear-gradient(180deg,#0f1720,#0c131b);
-    border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 26px rgba(0,0,0,.45)}
-  .vhead{padding:12px 14px; font-weight:900; color:#bfe8ff; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg,#0c131b,#0f1720)}
-  .vplayer{position:relative; background:#000}
-  .video{width:100%; height: clamp(220px, 52vw, 560px); display:block; background:#000}
-
-  /* ووتارمارك (اسم المستخدم فقط) */
-  .wm{pointer-events:none; position:absolute; inset:0}
-  .tag{position:absolute; font-weight:900; font-size: clamp(14px, 3.6vw, 22px); color: rgba(255,255,255,.92); text-shadow: 0 2px 10px rgba(0,0,0,.55); user-select:none}
-
-  /* شبكة شبه شفافة اختيارية */
-  .wm-tiles{position:absolute; inset:0; pointer-events:none; opacity:.06; background-size:220px 120px; background-repeat:repeat; mix-blend-mode:overlay}
-
-  /* عناصر التحكم المخصصة */
-  .controls{
-    position:relative; display:flex; align-items:center; gap:10px; padding:10px; background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.55));
-    border-top:1px solid rgba(255,255,255,.08)
-  }
-  .cbtn{appearance:none; border:0; border-radius:10px; padding:9px 12px; font-weight:900; cursor:pointer;
-    background:#0d141c; color:#cfe6fb; border:1px solid rgba(255,255,255,.08)}
-  .cbtn:hover{transform:translateY(-1px)}
-  .range{flex:1; appearance:none; height:8px; border-radius:10px; background:#1a2a39; outline:none}
-  .range::-webkit-slider-thumb{appearance:none; width:16px; height:16px; border-radius:50%; background:linear-gradient(135deg,var(--brand1),var(--brand2)); border:0}
-  .time{min-width:96px; text-align:center; font-weight:900; color:#bfe8ff}
-
-  /* شاشة قفل عند الطرد */
-  .lock{position:fixed; inset:0; background:rgba(0,0,0,.88); color:#fff; display:none; place-items:center; z-index:80}
-  .lock .box{background:#101820; border:1px solid #2a3a4a; padding:24px; border-radius:16px; text-align:center; max-width:460px}
-
-  /* تأثير حلقة دخول */
-  .gate{position:fixed; inset:0; pointer-events:none; z-index:40; display:none}
-  .ring{position:absolute; inset:0; margin:auto; width:160vmax; height:160vmax; border-radius:50%;
-    background:radial-gradient(circle, rgba(255,255,255,.0) 40%, rgba(0,211,143,.28) 41%, rgba(255,140,0,.3) 43%, rgba(255,255,255,0) 46%);
-    animation: boom .9s ease-out forwards }
-  @keyframes boom{ 0%{ transform:scale(.02); opacity:1 } 100%{ transform:scale(1.1); opacity:0 } }
-
-  /* روابط/نصوص ثانوية */
-  .muted{color:var(--muted); font-weight:700; opacity:.85}
 </style>
 </head>
 <body>
 
-<!-- كانفاس نجوم طايرة -->
-<canvas class="stars" id="stars" aria-hidden="true"></canvas>
+<!-- stars background canvas -->
+<canvas id="stars" class="stars" aria-hidden="true"></canvas>
 
-<!-- عناصر خلفية طايرة -->
-<div class="floaty" aria-hidden="true">
-  <div class="orb g p1"></div>
-  <div class="orb o p2"></div>
-  <div class="orb b p3"></div>
-</div>
-
-<div class="toast" id="toast">🔒 الموقع مؤمّن</div>
-
-<!-- شريط علوي -->
-<div class="topbar" id="topbar">
+<!-- top bar -->
+<div class="topbar">
   <div class="topwrap">
     <div class="brand"><span class="dot"></span><span>منصة الكورس (حماية قصوى)</span></div>
     <div class="clock" id="clock">--:--:--</div>
     <div class="actionsbar">
-      <button class="btn ghost" id="backBtn" title="رجوع للصفحة السابقة">⬅️ رجوع</button>
-      <button class="btn primary" id="panicBtn" title="خروج فوري">🚨 خروج فوري</button>
+      <button class="btn ghost" id="backBtn" title="رجوع">⬅️</button>
+      <button class="btn primary" id="panicBtn" title="خروج فوري">🚨 خروج</button>
     </div>
   </div>
 </div>
 
-<div class="gate" id="gate"><div class="ring"></div></div>
+<!-- motivation -->
+<div class="motivation">
+  <div class="wrap"><div id="motivationText" class="fade">✦ ابدأ الآن — الدقائق الصغيرة تصنع فرقًا كبيرًا.</div></div>
+</div>
 
-<!-- شاشة قفل -->
-<div class="lock" id="lock">
+<!-- toast -->
+<div id="toast" class="toast">🔒 الموقع مؤمّن</div>
+
+<!-- lock overlay -->
+<div id="lock" class="lock" aria-hidden="true">
   <div class="box">
     <h2>🚫 تم إغلاق الجلسة</h2>
-    <p id="lockMsg">لقد تم تسجيل خروجك بسبب محاولة غير مسموح بها.</p>
+    <p id="lockMsg">تم إنهاء الجلسة لأسباب أمنيّة.</p>
   </div>
 </div>
 
-<!-- صفحة تسجيل الدخول -->
-<main class="shell" id="login">
-  <section class="card" role="dialog" aria-labelledby="title">
-    <header class="card-head">
-      <h1 id="title">تسجيل الدخول إلى الكورس</h1>
-      <p>أدخل بياناتك وابدأ التعلم ✨</p>
-      <div class="ribbons" aria-hidden="true">
-        <div class="rib"></div><div class="rib"></div><div class="rib"></div>
-      </div>
-    </header>
-    <div class="card-body">
-      <label class="label" for="u">اسم المستخدم</label>
-      <input class="input" id="u" autocomplete="username" inputmode="text" placeholder="مثال: dr2025001" />
-
-      <label class="label" for="p">كلمة المرور</label>
-      <input class="input" id="p" type="password" autocomplete="current-password" placeholder="••••••••" />
-
-      <div class="actions">
-        <button class="btn primary" id="loginBtn">دخول</button>
-        <button class="btn ghost" id="clearBtn" title="مسح المدخلات">مسح</button>
-      </div>
-      <div class="helper" id="err"></div>
-
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:6px">
-        <small class="muted">محمي — أي محاولة نسخ/تصوير/أدوات مطور = خروج فوري</small>
-      </div>
+<!-- login screen -->
+<main id="login" class="center-card">
+  <div class="card" role="dialog" aria-labelledby="login-title">
+    <div class="card-head">
+      <h1 id="login-title">تسجيل الدخول إلى الكورس</h1>
+      <div class="muted">أدخل اسم المستخدم وكلمة المرور للمتابعة</div>
     </div>
-  </section>
+    <div class="inputs">
+      <input id="u" class="input" placeholder="مثال: dr2025001" autocomplete="username" />
+      <input id="p" class="input" placeholder="••••••••" type="password" autocomplete="current-password" />
+      <div style="display:flex;gap:10px">
+        <button id="loginBtn" class="btn primary">دخول</button>
+        <button id="clearBtn" class="btn ghost">مسح</button>
+      </div>
+      <div id="err" class="muted" style="margin-top:8px;height:20px"></div>
+      <div style="margin-top:10px"><small class="muted">محمي — محاولة النسخ أو التصوير داخل المتصفح قد تُنهِي الجلسة</small></div>
+    </div>
+  </div>
 </main>
 
-<!-- التطبيق بعد الدخول -->
-<section id="app">
-  <div class="app-content">
-    <div class="hdr-line">
-      <div><strong id="who"></strong></div>
+<!-- app (hidden until login) -->
+<section id="app" style="display:none;opacity:0">
+  <div class="container">
+    <div class="header-row">
+      <div class="who" id="who"></div>
       <div style="display:flex;gap:8px">
-        <button class="btn ghost" id="logoutBtn">تسجيل الخروج</button>
+        <button id="logoutBtn" class="btn ghost">تسجيل الخروج</button>
       </div>
     </div>
-    <div class="grid" id="videos"></div>
+
+    <!-- videos will be injected here -->
+    <div id="videos"></div>
   </div>
 </section>
 
 <script>
-/* ======================== بيانات أساسية ======================== */
-
-// 1) قائمة المستخدمين (مثال — عدّلها لو عايز)
+/* =================== بيانات (عدل هنا) =================== */
+// أضف/احذف أو غير أسماء المستخدمين هنا
 const users = [
   { username: "dr2025001", password: "QK472" },
   { username: "dr2025002", password: "HB915" },
@@ -342,263 +274,287 @@ const users = [
   { username: "dr2025100", password: "OF284" }
 ];
 
-// 2) مصادر الفيديو المحلية: video1.mp4 … video20.mp4 داخل مجلد /videos
-const videoFiles = Array.from({length:20}, (_,i)=> `videos/video${i+1}.mp4`);
+// ضع ملفات الفيديو داخل مجلد videos/ بنفس الأسماء
+const videoFiles = [
+  'videos/video1.mp4',
+  'videos/video2.mp4',
+  'videos/video3.mp4',
+  'videos/video4.mp4'
+];
 
-/* ======================== حالة الجلسة ======================== */
+/* =================== متغيرات حالة =================== */
 let currentUser = null;
-let okUntil = 0;            // نافذة سماح للتفاعل مع الفيديو
-let suppressOnce = false;   // تجاهل blur/hidden مرة واحدة بعد فعل مشروع
+let okUntil = 0;           // نافذة سماح للتفاعل
+let suppressOnce = false;  // لتجاهل أول تغيير عندما يكون مشروع
 const ANGRY = '😡 محاولة غير مسموح بها — تم إغلاق الجلسة فورًا.';
+const qs = (s,p=document) => p.querySelector(s);
+const qsa = (s,p=document) => [...p.querySelectorAll(s)];
 
-const qs = (s,p=document)=>p.querySelector(s);
-const qsa = (s,p=document)=>[...p.querySelectorAll(s)];
+function showToast(msg){
+  const t = qs('#toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
 
-function showToast(msg){ const t=qs('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2100); }
-
-/* ======================== ساعة أونلاين ======================== */
+/* =================== الساعة =================== */
 function tickClock(){
   try{
     const now = new Date();
-    const fmt = new Intl.DateTimeFormat('ar-EG', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:'Africa/Cairo' });
+    const fmt = new Intl.DateTimeFormat('ar-EG',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:'Africa/Cairo'});
     qs('#clock').textContent = fmt.format(now);
-  }catch{
-    qs('#clock').textContent = new Date().toLocaleTimeString();
-  }
+  }catch{ qs('#clock').textContent = new Date().toLocaleTimeString(); }
 }
-setInterval(tickClock, 1000); tickClock();
+setInterval(tickClock,1000); tickClock();
 
-/* ======================== دخول/خروج ======================== */
-function enterApp(){
-  const g = qs('#gate');
-  g.style.display = 'block';
-  g.firstElementChild.style.animation = 'none'; void g.firstElementChild.offsetWidth;
-  g.firstElementChild.style.animation = 'boom .9s ease-out forwards';
-  setTimeout(()=>{
-    qs('#login').style.display='none';
-    const app=qs('#app'); app.style.display='block';
-    requestAnimationFrame(()=>{ app.style.opacity=1; });
-    showToast('🎉 تم الدخول');
-  }, 120);
-}
+/* =================== تجول جُمل تحفيزية =================== */
+const MOTIVATIONS = [
+  '✦ ابدأ الآن — الدقائق الصغيرة تصنع فرقًا كبيرًا.',
+  '✦ كل فيديو تنهيه يقرّبك من هدفك.',
+  '✦ التزامك اليوم = ثقة أكبر غدًا.',
+  '✦ لا تنتظر المثالية — تقدّم خطوة.',
+  '✦ تعلّم بتركيز، راحة قصيرة، ثم عُد بقوة.',
+  '✦ العلم رزق، ونيّتك الطيبة تفتح الأبواب.',
+  '✦ أنت أقوى مما تظن — كمل للآخر.'
+];
+(function rotateMotivation(){
+  const el = qs('#motivationText'); let i=0;
+  setInterval(()=>{
+    el.classList.remove('show');
+    setTimeout(()=>{ el.textContent = MOTIVATIONS[(++i)%MOTIVATIONS.length]; el.classList.add('show'); }, 260);
+  }, 5200);
+  requestAnimationFrame(()=> qs('#motivationText').classList.add('show'));
+})();
 
-function hardExit(reason){
-  try{ sessionStorage.clear(); localStorage.clear(); }catch{}
-  try{ console.clear(); }catch{}
-  try{ document.body.innerHTML=''; }catch{}
-  try{ window.stop(); }catch{}
-  try{ location.replace('about:blank'); }catch{}
-  try{ open('','_self'); close(); }catch{}
-}
-
-function forceLogout(msg){
-  currentUser = null;
-  try{ qs('#who').textContent=''; }catch{}
-  const lock = qs('#lock'); qs('#lockMsg').textContent = msg || ANGRY; lock.style.display='grid';
-  setTimeout(()=> hardExit(msg||ANGRY), 220);
-}
-
+/* =================== عناصر DOM - تسجيل دخول =================== */
 qs('#loginBtn').addEventListener('click', ()=>{
-  const u = qs('#u').value.trim();
-  const p = qs('#p').value.trim();
-  if(!u || !p){ qs('#err').textContent='من فضلك أدخل البيانات كاملة'; return; }
-  if(!/^dr2025\d{3}$/i.test(u)){ qs('#err').textContent='صيغة اسم المستخدم يجب أن تكون مثل: dr2025001'; return; }
-  if(!users.some(x=> x.username===u && x.password===p )){
-    qs('#err').textContent='❌ اسم المستخدم أو كلمة المرور غير صحيحة'; return;
-  }
-  qs('#err').textContent='';
-  currentUser = u; qs('#who').textContent = `مرحبًا، ${u}`;
-  renderVideos();
-  enterApp();
+  const u = qs('#u').value.trim(), p = qs('#p').value.trim();
+  if(!u || !p){ qs('#err').textContent = 'من فضلك أدخل البيانات كاملة'; return; }
+  if(!/^dr2025\d{3}$/i.test(u)){ qs('#err').textContent = 'صيغة اسم المستخدم يجب أن تكون مثل: dr2025001'; return; }
+  if(!users.some(x => x.username === u && x.password === p)){ qs('#err').textContent = '❌ اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
+  qs('#err').textContent = ''; currentUser = u; qs('#who').textContent = `مرحبًا، ${u}`;
+  renderVideos(); enterApp();
 });
 qs('#clearBtn').addEventListener('click', ()=>{ qs('#u').value=''; qs('#p').value=''; qs('#err').textContent=''; });
 qs('#logoutBtn').addEventListener('click', ()=> forceLogout('🚪 تم تسجيل الخروج'));
-qs('#panicBtn').addEventListener('click', ()=> forceLogout('⛔ تم إنهاء الجلسة يدويًا'));
-qs('#backBtn').addEventListener('click', ()=>{ try{ history.length>1 ? history.back() : location.replace('/'); }catch{ location.replace('/'); } });
+qs('#panicBtn').addEventListener('click', ()=> forceLogout('⛔ انتهاء الجلسة'));
+qs('#backBtn').addEventListener('click', ()=> { try{ history.length>1 ? history.back() : location.replace('/'); }catch{ location.replace('/'); } });
 
-/* ======================== واجهة الفيديو ======================== */
+function enterApp(){
+  qs('#login').style.display = 'none';
+  const app = qs('#app'); app.style.display = 'block';
+  requestAnimationFrame(()=> app.style.opacity = 1);
+  showToast('🎉 تم الدخول — مرحبًا بك');
+}
+
+/* =================== render videos (YouTube-like stacked cards) =================== */
 function renderVideos(){
-  const wrap = qs('#videos'); wrap.innerHTML='';
-  videoFiles.forEach((src, idx)=>{
-    const id = idx+1;
-    const card = document.createElement('article'); card.className='vcard col';
-    const tileBG = 'repeating-linear-gradient(45deg, transparent 0 160px, rgba(255,255,255,.9) 160px 161px), repeating-linear-gradient(-45deg, transparent 0 160px, rgba(255,255,255,.9) 160px 161px)';
-    card.innerHTML = `
+  const wrap = qs('#videos'); wrap.innerHTML = '';
+  videoFiles.forEach((src, idx) => {
+    const id = idx + 1;
+    const article = document.createElement('article');
+    article.className = 'vcard reveal';
+    article.innerHTML = `
       <div class="vhead">
-        <span>🎬 الفيديو ${id}</span>
-        <span style="color:var(--brand2);font-weight:900">تشغيل فقط</span>
+        <div>🎬 الفيديو ${id}</div>
+        <div style="color:var(--accent2);font-weight:900">تشغيل فقط</div>
       </div>
-      <div class="vplayer js-vp">
-        <div class="wm-tiles" style="background-image:${JSON.stringify(tileBG)}"></div>
-        <div class="wm"><span class="tag" id="wm-${idx}">${currentUser||''}</span></div>
-        <video class="video"
-          preload="metadata"
-          playsinline
-          disablepictureinpicture
-          controlslist="nodownload noplaybackrate noremoteplayback"
-          src="${src}"></video>
+      <div class="vplayer">
+        <div class="wm"></div>
+        <video class="video" preload="metadata" playsinline controls controlslist="nodownload noremoteplayback" src="${src}"></video>
         <div class="controls">
-          <button class="cbtn play">⏯ تشغيل/إيقاف</button>
-          <button class="cbtn back">⏪ -10ث</button>
-          <button class="cbtn fwd">⏩ +10ث</button>
-          <input class="range seek" type="range" min="0" max="100" value="0" step="0.1" />
-          <span class="time t">00:00 / 00:00</span>
-          <input class="range vol" type="range" min="0" max="1" value="1" step="0.01" style="max-width:140px" />
-          <button class="cbtn fs">⛶ ملء الشاشة</button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="cbtn play">تشغيل/إيقاف</button>
+            <button class="cbtn back">◀︎ 10s</button>
+            <button class="cbtn fwd">10s ▶︎</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="time t">00:00 / 00:00</span>
+            <button class="cbtn fs">ملء</button>
+          </div>
         </div>
-      </div>`;
-    wrap.appendChild(card);
-    startFloatingWM(qs(`#wm-${idx}`));
+      </div>
+    `;
+    wrap.appendChild(article);
 
-    // ضبط عناصر التحكم
-    const vp   = card.querySelector('.js-vp');
-    const v    = card.querySelector('.video');
-    const play = card.querySelector('.play');
-    const back = card.querySelector('.back');
-    const fwd  = card.querySelector('.fwd');
-    const seek = card.querySelector('.seek');
-    const vol  = card.querySelector('.vol');
-    const tm   = card.querySelector('.t');
-    const fs   = card.querySelector('.fs');
+    // بعد الإضافة نفعل الوتَرمارك ونربط الكنترولز
+    const v = article.querySelector('.video');
+    const wm = article.querySelector('.wm');
+    // نص الوترمارك: اسم المستخدم ووقت التحميل
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = currentUser || '';
+    wm.appendChild(tag);
+    const stamp = document.createElement('span');
+    stamp.className = 'stamp';
+    stamp.textContent = new Date().toLocaleString('ar-EG', { timeZone:'Africa/Cairo' });
+    wm.appendChild(stamp);
+    startFloatingWM(tag);
 
-    // نافذة سماح عند أي تفاعل مع منطقة الفيديو/التحكم
-    ['pointerenter','touchstart','pointerdown','mousemove','click','play','pause','seeking','volumechange'].forEach(ev=>{
-      vp.addEventListener(ev, ()=> allowVideoInteraction(2200), {passive:true});
+    // عناصر التحكم
+    const playBtn = article.querySelector('.play');
+    const backBtn = article.querySelector('.back');
+    const fwdBtn  = article.querySelector('.fwd');
+    const fsBtn   = article.querySelector('.fs');
+    const tLabel  = article.querySelector('.t');
+
+    // نافذة سماح للتغييرات المشروعة (مثل فتح إعدادات الفيديو أو التكبير)
+    ['pointerenter','mousemove','click','touchstart','play','pause','seeking','volumechange'].forEach(ev=>{
       v.addEventListener(ev, ()=> allowVideoInteraction(2200), {passive:true});
     });
 
-    // منع القائمة اليمنى فوق الفيديو
-    v.addEventListener('contextmenu', e=>{ e.preventDefault(); if(currentUser) forceLogout(ANGRY+' (كليك يمين فيديو)'); });
+    // ملاحظة: نترك قائمة الفيديو (context menu) للعمل -- المستخدم يقدر يفتح إعدادات الفيديو
+    // لكن نمنع الكليك يمين في الصفحة العامة
+    // (لا نمنع داخل الفيديو هنا so user can use settings)
 
-    // تشغيل/إيقاف
-    play.addEventListener('click', ()=> v.paused ? v.play().catch(()=>{}) : v.pause());
-
-    // تقديم/ترجيع
-    back.addEventListener('click', ()=>{ try{ v.currentTime = Math.max(0, v.currentTime-10); }catch{} });
-    fwd .addEventListener('click', ()=>{ try{ v.currentTime = Math.min(v.duration||v.currentTime+10, v.currentTime+10); }catch{} });
-
-    // مؤقت و Seek
-    function fmt(t){ if(!isFinite(t)) return '00:00'; const m = Math.floor(t/60); const s = Math.floor(t%60); return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
-    v.addEventListener('timeupdate', ()=>{
-      const val = (v.currentTime / (v.duration||1))*100;
-      seek.value = isFinite(val) ? val : 0;
-      tm.textContent = `${fmt(v.currentTime)} / ${fmt(v.duration||0)}`;
-    });
-    v.addEventListener('loadedmetadata', ()=>{ tm.textContent = `${fmt(0)} / ${fmt(v.duration||0)}`; });
-    seek.addEventListener('input', ()=>{ try{ v.currentTime = (seek.value/100) * (v.duration||0); }catch{} });
-
-    // صوت
-    vol.addEventListener('input', ()=>{ v.volume = Number(vol.value||1); });
-
-    // ملء الشاشة
-    fs.addEventListener('click', ()=>{
-      const el = v.closest('.vplayer');
+    playBtn.addEventListener('click', ()=> { try{ if(v.paused) v.play(); else v.pause(); }catch{} });
+    backBtn.addEventListener('click', ()=> { try{ v.currentTime = Math.max(0, v.currentTime - 10); }catch{} });
+    fwdBtn.addEventListener('click', ()=> { try{ v.currentTime = Math.min((v.duration||0), v.currentTime + 10); }catch{} });
+    fsBtn.addEventListener('click', ()=> {
       allowVideoInteraction(2600);
-      if(!document.fullscreenElement){
-        el.requestFullscreen?.().catch(()=>{});
-      }else{
-        document.exitFullscreen?.().catch(()=>{});
-      }
+      const el = v.closest('.vplayer');
+      if(!document.fullscreenElement) el.requestFullscreen?.().catch(()=>{});
+      else document.exitFullscreen?.catch(()=>{});
     });
 
-    // عند فشل تحميل الفيديو (غير موجود)
-    v.addEventListener('error', ()=>{
-      const note = document.createElement('div');
-      note.className='muted';
-      note.style.cssText='padding:10px 12px;border-top:1px solid rgba(255,255,255,.08)';
-      note.textContent='⚠️ تعذّر تحميل الفيديو — ارفع الملف داخل /videos بالاسم الصحيح.';
-      card.appendChild(note);
+    // update time label
+    function fmt(t){ if(!isFinite(t)) return '00:00'; const m=Math.floor(t/60); const s=Math.floor(t%60); return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
+    v.addEventListener('timeupdate', ()=> { tLabel.textContent = `${fmt(v.currentTime)} / ${fmt(v.duration||0)}`; });
+    v.addEventListener('loadedmetadata', ()=> { tLabel.textContent = `${fmt(0)} / ${fmt(v.duration||0)}`; });
+
+    // if video fails to load, show note
+    v.addEventListener('error', ()=> {
+      const note = document.createElement('div'); note.className='muted'; note.style.padding='10px'; note.textContent = '⚠️ تعذر تحميل الفيديو — تأكد من المسار.';
+      article.appendChild(note);
     });
   });
+
+  // reveal animation for cards
+  const reveals = qsa('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => { if(en.isIntersecting){ en.target.classList.add('visible'); obs.unobserve(en.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => obs.observe(r));
 }
 
-/* ======================== ووتارمارك متحرك ======================== */
+/* =============== floating watermark movement =============== */
 function startFloatingWM(el){
   if(!el) return;
-  const parent = el.parentElement; // .wm
+  const parent = el.closest('.vplayer') || el.parentElement;
   const move = ()=>{
-    const p = parent.getBoundingClientRect();
-    const pad = 42;
-    const x = Math.random() * Math.max(1,(p.width - pad*2)) + pad;
-    const y = Math.random() * Math.max(1,(p.height - pad*2)) + pad;
-    el.style.transform = `translate(${x}px, ${y}px)`;
-    el.style.opacity = String(0.85 + Math.random()*0.12);
+    try{
+      const r = parent.getBoundingClientRect();
+      const pad = 30;
+      const x = Math.random() * Math.max(1, r.width - pad*2) + pad;
+      const y = Math.random() * Math.max(1, r.height - pad*2) + pad;
+      el.style.transform = `translate(${x}px, ${y}px)`;
+      el.style.opacity = String(0.6 + Math.random()*0.35);
+    }catch{}
   };
   move();
-  setInterval(move, 2000 + Math.random()*1200);
+  setInterval(move, 2200 + Math.random()*1200);
 }
 
-/* ======================== حماية مشددة ======================== */
-// منع القائمة اليمنى خارج الفيديو
-document.addEventListener('contextmenu', (e)=>{ e.preventDefault(); if(currentUser) forceLogout(ANGRY + ' (كليك يمين)'); return false; });
+/* =============== حماية / منع تصوير (تقريبي) =============== */
+/* ملاحظات: لا يمكن حظر تسجيل الشاشة على مستوى نظام التشغيل. هذه إجراءات تقلّل من النسخ داخل المتصفح. */
 
-// منع سحب/إفلات + تحديد/نسخ/قص/لصق
-document.addEventListener('dragstart', e=> e.preventDefault());
-['selectstart','copy','cut','paste'].forEach(ev=> document.addEventListener(ev, (e)=>{ e.preventDefault(); if(currentUser) forceLogout(ANGRY + ` (${ev})`); }));
+function blockForCapture(extra){
+  if(!currentUser) return;
+  const msg = `🚫 ممنوع أخذ لقطة شاشة أو تسجيل الشاشة${extra? ' — ('+extra+')' : ''}`;
+  forceLogout(msg);
+}
 
-// منع اختصارات + أدوات المطور + طباعة + PrintScreen (قد لا يُرصد على كل المتصفحات)
-document.addEventListener('keydown', (e)=>{
-  const k = e.key; const ctrl = e.ctrlKey||e.metaKey; const sh=e.shiftKey;
-  const bad =
-    (ctrl && ['s','u','p','a','c','x'].includes(k.toLowerCase())) ||
-    (ctrl && sh && ['i','j','c'].includes(k.toLowerCase())) ||
-    k==='F12' || k==='PrintScreen' ||
-    (e.metaKey && sh && ['3','4','5'].includes(k)); // ماك سكرين شوت
-  if(bad){ e.preventDefault(); e.stopPropagation(); if(currentUser) forceLogout(ANGRY + ` (مفتاح ${k})`); }
+/* منع كليك يمين على الصفحة عامة، لكن نسمح داخل عناصر الفيديو نفسها (حتى لو فتح المستخدم إعدادات الفيديو) */
+document.addEventListener('contextmenu', e=>{
+  // إذا الهدف عنصر video أو داخل vplayer فلا نمنع
+  if(e.target && (e.target.closest && e.target.closest('.vplayer'))) return;
+  e.preventDefault();
+  if(currentUser) blockForCapture('كليك يمين');
+  return false;
 }, true);
-window.onbeforeprint = ()=>{ if(currentUser) forceLogout(ANGRY + ' (طباعة)') };
 
-// كشف devtools (تقريبي)
+/* منع عمليات النسخ/قص/لصق/selectstart/dragstart */
+['copy','cut','paste','selectstart','dragstart'].forEach(ev=>{
+  document.addEventListener(ev, e=>{
+    e.preventDefault();
+    if(currentUser) blockForCapture(ev);
+  }, true);
+});
+
+/* منع اختصارات شائعة + PrintScreen + F12 */
+document.addEventListener('keydown', (e)=>{
+  const key = e.key || '';
+  const ctrl = e.ctrlKey || e.metaKey;
+  const sh = e.shiftKey;
+  const lowered = key.toLowerCase();
+  const suspicious =
+    (ctrl && ['s','u','p','a','c','x'].includes(lowered)) ||    // ctrl+s / ctrl+u / ...
+    (ctrl && sh && ['i','j','c'].includes(lowered)) ||          // ctrl+shift+i / j / c
+    key === 'F12' ||
+    key === 'PrintScreen' ||
+    (e.metaKey && sh && ['3','4','5'].includes(lowered));
+  if(suspicious){
+    e.preventDefault();
+    e.stopPropagation();
+    if(currentUser) blockForCapture(`مفتاح ${key}`);
+  }
+}, true);
+
+/* قبل الطباعة */
+window.onbeforeprint = ()=> { if(currentUser) blockForCapture('طباعة'); };
+
+/* visibility / blur / resize detection */
+function allowVideoInteraction(ms = 2200){ okUntil = Date.now() + ms; suppressOnce = true; }
+function isSafeInteraction(){ return Date.now() < okUntil; }
+
+document.addEventListener('visibilitychange', ()=> {
+  if(!currentUser) return;
+  if(document.hidden){
+    if(suppressOnce){ suppressOnce = false; return; }
+    if(!isSafeInteraction()) blockForCapture('إخفاء التبويب/تصوير');
+  }
+});
+window.addEventListener('blur', ()=> { if(currentUser && !isSafeInteraction()) blockForCapture('فقدان تركيز'); });
+
+let lastW = window.innerWidth, lastH = window.innerHeight;
+window.addEventListener('resize', ()=> {
+  if(!currentUser) return;
+  const dw = Math.abs(window.innerWidth - lastW), dh = Math.abs(window.innerHeight - lastH);
+  lastW = window.innerWidth; lastH = window.innerHeight;
+  if((dw>240 || dh>240) && !isSafeInteraction()) blockForCapture('تبديل شاشة/تسجيل محتمل');
+});
+
+/* devtools heuristic (تقريبي) */
 let devCheck = setInterval(()=>{
   try{
     const bigGap = (window.outerWidth - window.innerWidth) > 160 || (window.outerHeight - window.innerHeight) > 160;
-    if(bigGap && currentUser) return forceLogout(ANGRY + ' (DevTools)');
-    const el = { get id(){ if(currentUser) forceLogout(ANGRY + ' (Console Open)'); } };
-    console.log(el);
+    if(bigGap && currentUser) return blockForCapture('DevTools');
+    const x = { get id(){ if(currentUser) blockForCapture('Console Open'); } };
+    console.log(x);
     let t = performance.now();
     for(let i=0;i<100000;i++){}
-    if(performance.now()-t > 250 && currentUser) forceLogout(ANGRY + ' (Debug Slow)');
+    if(performance.now() - t > 250 && currentUser) blockForCapture('Debug Slow');
   }catch{}
 }, 1500);
 
-// نافذة سماح عند تفاعل الفيديو
-function allowVideoInteraction(ms=2200){
-  okUntil = Date.now() + ms;
-  suppressOnce = true;
+/* force logout / hard exit */
+function forceLogout(msg){
+  currentUser = null;
+  try{ qs('#who').textContent = ''; }catch{}
+  const lock = qs('#lock'); qs('#lockMsg').textContent = msg || ANGRY; lock.style.display = 'grid';
+  setTimeout(()=> {
+    try{ sessionStorage.clear(); localStorage.clear(); }catch{}
+    try{ document.body.innerHTML = ''; }catch{}
+    try{ window.stop(); }catch{}
+    try{ location.replace('about:blank'); }catch{}
+  }, 260);
 }
-function isSafeInteraction(){ return Date.now() < okUntil; }
 
-// blur/visibilitychange/resize — الطرد فقط إن ماكانش فيه نافذة سماح
-document.addEventListener('visibilitychange', ()=>{
-  if(!currentUser) return;
-  if(document.hidden){
-    if(suppressOnce){ suppressOnce=false; return; }
-    if(!isSafeInteraction()) forceLogout(ANGRY + ' (إخفاء التبويب/تصوير)');
-  }
-});
-window.addEventListener('blur', ()=>{ if(currentUser && !isSafeInteraction()) forceLogout(ANGRY + ' (فقدان تركيز)'); });
-
-let lastW = window.innerWidth, lastH = window.innerHeight;
-window.addEventListener('resize', ()=>{
-  if(!currentUser) return;
-  const dw = Math.abs(window.innerWidth - lastW);
-  const dh = Math.abs(window.innerHeight - lastH);
-  lastW = window.innerWidth; lastH = window.innerHeight;
-  if((dw>240 || dh>240) && !isSafeInteraction()) forceLogout(ANGRY + ' (تبديل شاشة/تسجيل محتمل)');
-});
-document.addEventListener('fullscreenchange', ()=> allowVideoInteraction(2600));
-
-/* ======================== نجوم طايرة (Canvas) ======================== */
+/* =============== stars canvas =============== */
 (function stars(){
-  const c = document.getElementById('stars');
+  const c = qs('#stars'); if(!c) return;
   const ctx = c.getContext('2d');
   let w,h,stars=[];
-  function resize(){ w= c.width = innerWidth; h= c.height = innerHeight; stars = Array.from({length:Math.min(250, Math.floor(w*h/8000))}, ()=>({
-    x: Math.random()*w,
-    y: Math.random()*h,
-    z: Math.random()*1.5 + .2,
-    r: Math.random()*1.8 + .2,
-    o: Math.random()*.6 + .2
+  function resize(){ w=c.width=innerWidth; h=c.height=innerHeight; stars = Array.from({length:Math.min(260, Math.floor(w*h/9000))}, ()=>({
+    x: Math.random()*w, y: Math.random()*h, z: Math.random()*1.6 + .2, r: Math.random()*1.6 + .2, o: Math.random()*.6 + .15
   })); }
   resize(); addEventListener('resize', resize);
   function frame(){
@@ -606,7 +562,7 @@ document.addEventListener('fullscreenchange', ()=> allowVideoInteraction(2600));
     for(const s of stars){
       s.x += Math.sin(performance.now()/1200)*0.02 * s.z;
       s.y += 0.04*s.z;
-      if(s.y>h) s.y = -5, s.x = Math.random()*w;
+      if(s.y>h){ s.y=-5; s.x=Math.random()*w; }
       ctx.globalAlpha = s.o;
       ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle='#7fc9ff'; ctx.fill();
     }
@@ -615,8 +571,9 @@ document.addEventListener('fullscreenchange', ()=> allowVideoInteraction(2600));
   frame();
 })();
 
-/* ======================== رسالة بدء ======================== */
+/* =============== startup message =============== */
 showToast('🔒 الموقع مؤمّن — أي محاولة نسخ/تصوير = خروج فوري');
 </script>
 </body>
 </html>
+
