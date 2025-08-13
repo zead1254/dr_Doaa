@@ -1,181 +1,451 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تسجيل الدخول</title>
-<style>
-    body {
-        margin: 0;
-        font-family: 'Tahoma', sans-serif;
-        background: #fff;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>بوابة الكورس — دخول & فيديوهات</title>
 
-    /* خلفية الأمواج */
-    .waves {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 200px;
-        z-index: -1;
-        overflow: hidden;
-    }
-    .wave {
-        position: absolute;
-        bottom: 0;
-        width: 200%;
-        height: 200px;
-        background: rgba(255, 165, 0, 0.4);
-        border-radius: 43%;
-        animation: waveAnim 8s infinite linear;
-    }
-    .wave:nth-child(2) {
-        background: rgba(255, 140, 0, 0.3);
-        animation-duration: 10s;
-    }
-    .wave:nth-child(3) {
-        background: rgba(255, 100, 0, 0.2);
-        animation-duration: 12s;
-    }
+  <!-- خط -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
 
-    @keyframes waveAnim {
-        from { transform: translateX(0) rotate(0deg); }
-        to { transform: translateX(-50%) rotate(360deg); }
-    }
+  <!-- أمان أساسي عبر CSP (قد لا يعمل محليًا بكامل القوة لكنه يساعد عند الرفع على سيرفر) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://www.youtube.com; img-src 'self' data: https://*; media-src https://*; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-src https://www.youtube.com; frame-ancestors 'none'; upgrade-insecure-requests">
 
-    /* صندوق تسجيل الدخول */
-    .login-container {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
-        width: 320px;
-        text-align: center;
+  <style>
+    :root{
+      --bg: #ffffff;
+      --green:#00a86b; /* أخضر */
+      --orange:#ff8c00; /* برتقالي قوي */
+      --orange-2:#ffb347; /* برتقالي فاتح */
+      --ink:#1d1e22;
     }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:'Cairo',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
+      background: radial-gradient(1200px 800px at 10% -20%, rgba(255,140,0,.18), transparent 60%),
+                  radial-gradient(900px 600px at 110% 120%, rgba(0,168,107,.15), transparent 55%),
+                  linear-gradient(180deg,#fff 0%, #fff 40%, #f8fff9 100%);
+      color:var(--ink);
+      overflow-x:hidden;
+      user-select:none; /* منع تحديد النص */
+    }
+    /* عناصر خلفية طايرة */
+    .floaty{position:fixed; inset:0; pointer-events:none; z-index:-1}
+    .blob{
+      position:absolute; width:320px; height:320px; border-radius:50%;
+      filter:blur(40px); opacity:.35; mix-blend-mode:multiply;
+      animation: drift 18s linear infinite;
+    }
+    .blob.g{ background:radial-gradient(circle at 30% 30%, #00a86b, transparent 60%)}
+    .blob.o{ background:radial-gradient(circle at 70% 70%, #ff8c00, transparent 60%)}
+    .blob.b1{ top:12%; right:-6%; animation-duration:22s }
+    .blob.b2{ bottom:-8%; left:-6%; animation-duration:26s }
+    @keyframes drift { 0%{transform:translate(0,0) rotate(0)} 50%{transform:translate(40px,-20px) rotate(120deg)} 100%{transform:translate(0,0) rotate(360deg)} }
 
-    h2 {
-        color: orange;
-        margin-bottom: 15px;
-    }
+    /* Toast */
+    .toast{ position:fixed; top:20px; right:20px; padding:12px 16px; background:linear-gradient(135deg,var(--green),var(--orange)); color:#fff; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.18); opacity:0; transform:translateY(-10px) scale(.95); transition:.35s; z-index:50; font-weight:700 }
+    .toast.show{ opacity:1; transform:translateY(0) scale(1) }
 
-    input[type="text"], input[type="password"] {
-        width: 90%;
-        padding: 10px;
-        margin: 8px 0;
-        border: 2px solid orange;
-        border-radius: 8px;
-        outline: none;
-        font-size: 14px;
-    }
+    /* غلاف */
+    .shell{ min-height:100%; display:grid; place-items:center; padding:20px }
 
-    button {
-        background: orange;
-        color: white;
-        border: none;
-        padding: 10px 25px;
-        border-radius: 8px;
-        font-size: 15px;
-        cursor: pointer;
-        margin-top: 10px;
+    /* كارت تسجيل الدخول */
+    .card{
+      width:min(420px, 94vw);
+      background:rgba(255,255,255,.85);
+      border-radius:24px;
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow: 0 30px 80px rgba(0,168,107,.18), 0 10px 30px rgba(255,140,0,.15);
+      overflow:hidden;
+      transform: translateY(10px);
+      animation: pop .7s cubic-bezier(.2,.9,.2,1) .1s forwards;
     }
+    @keyframes pop{ to{transform:none} }
+    .card-head{
+      position:relative; padding:28px 24px 20px; text-align:center; color:#fff;
+      background:
+        conic-gradient(from 210deg at 50% 50%, var(--green), var(--orange), var(--orange-2), var(--green));
+    }
+    .card-head h1{ margin:0; font-size:clamp(20px, 3.8vw, 28px); font-weight:800; letter-spacing:.3px }
+    .card-head p{ margin:.35rem 0 0; opacity:.9; font-weight:600 }
+    .ribbons{ position:absolute; inset:auto 0 -18px 0; height:36px; display:flex; gap:6px; justify-content:center; filter:drop-shadow(0 6px 10px rgba(0,0,0,.25)) }
+    .rib{ width:84px; height:36px; border-radius:10px; background:linear-gradient(135deg,#fff, #f7fff9); border:1px solid rgba(0,0,0,.06); transform: skewX(-18deg) }
 
-    button:hover {
-        background: darkorange;
+    .card-body{ padding:24px }
+    .field{ margin:10px 0 14px }
+    .label{ font-size:14px; font-weight:700; color:#0a3d2d; margin-bottom:6px; display:block }
+    .input{
+      width:100%; padding:14px 14px; border-radius:14px; border:2px solid #e6f3ef; outline:none;
+      background:#ffffff; font-size:16px; transition:.25s; user-select:auto; /* السماح بالتحديد داخل المدخلات */
     }
+    .input:focus{ border-color:var(--green); box-shadow:0 0 0 4px rgba(0,168,107,.12) }
 
-    .error {
-        color: red;
-        margin-top: 10px;
+    .actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px }
+    .btn{
+      appearance:none; border:0; cursor:pointer; font-weight:800; letter-spacing:.2px;
+      border-radius:14px; padding:12px 18px; transition: .25s; position:relative; overflow:hidden
     }
+    .btn.primary{ color:#fff; background:linear-gradient(135deg,var(--green), var(--orange)); box-shadow: 0 10px 22px rgba(0,168,107,.25) }
+    .btn.primary:hover{ transform: translateY(-1px) }
+    .btn.ghost{ background:#fff; color:var(--green); border:2px solid #e6f3ef }
+    .helper{ font-size:13px; color:#d01f1f; min-height:20px; margin-top:8px; font-weight:700 }
 
-    /* رابط واتساب */
-    .whatsapp-link {
-        display: inline-block;
-        margin-top: 15px;
-        text-decoration: none;
-        color: green;
-        font-size: 16px;
-        font-weight: bold;
+    .whatsapp{
+      display:flex; align-items:center; justify-content:center; gap:8px; margin:14px 0 8px;
+      font-weight:800; text-decoration:none; color:#0c8f3f; padding:10px 12px; border-radius:14px; background:#eafff4; border:1px solid #bcf3d4
     }
-    .whatsapp-link img {
-        width: 20px;
-        vertical-align: middle;
-        margin-left: 5px;
+    .whatsapp img{ width:20px; height:20px }
+
+    .admin-tools{ display:flex; justify-content:center; margin-top:10px }
+    .admin-tools button{ font-size:12px; padding:8px 10px }
+
+    /* قسم التطبيق بعد الدخول */
+    #app{ display:none; opacity:0 }
+    .app-header{
+      position:sticky; top:0; z-index:20; backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.75));
+      border-bottom:1px solid rgba(0,0,0,.06);
     }
-</style>
+    .app-header .wrap{ max-width:1100px; margin:auto; padding:12px 18px; display:flex; align-items:center; gap:12px; justify-content:space-between }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:900; color:#0a3d2d }
+    .brand .dot{ width:12px; height:12px; border-radius:50%; background:linear-gradient(135deg,var(--green),var(--orange)) }
+    .logout{ font-size:14px }
+
+    .app-content{ max-width:1100px; margin:20px auto; padding:0 16px 50px }
+    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:16px }
+    .col{ grid-column: span 12 }
+    @media (min-width: 760px){ .col{ grid-column: span 6 } }
+
+    .vcard{ position:relative; border-radius:20px; overflow:hidden; background:#fff; border:1px solid rgba(0,0,0,.05);
+      box-shadow: 0 12px 22px rgba(0,0,0,.12); }
+    .vhead{ padding:14px 16px; font-weight:800; color:#0a3d2d; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg,#f7fff9,#fff) }
+    .vplayer{ position:relative }
+    iframe{ width:100%; height: clamp(220px, 56vw, 520px); border:0; display:block }
+
+    /* ووتارمارك متحرك فوق الفيديو — لا يمنع النقر (pointer-events:none) */
+    .wm{ pointer-events:none; position:absolute; inset:0; display:grid; place-items:center; }
+    .wm .tag{ font-weight:900; font-size: clamp(14px, 3.6vw, 22px); color: rgba(255,255,255,.82); text-shadow: 0 2px 10px rgba(0,0,0,.55); animation: wander 12s linear infinite }
+    @keyframes wander{ 0%{ transform: translate(-35%, -35%) } 25%{ transform: translate(35%, -35%) } 50%{ transform: translate(35%, 35%) } 75%{ transform: translate(-35%, 35%) } 100%{ transform: translate(-35%,-35%) } }
+
+    /* ووتارمارك مكرر خفيف كشبكة */
+    .wm-tiles{ position:absolute; inset:0; pointer-events:none; opacity:.085; background-size:220px 120px; background-repeat:repeat; mix-blend-mode:multiply }
+
+    /* شاشة قفل عند الطرد */
+    .lock{ position:fixed; inset:0; background:rgba(0,0,0,.72); color:#fff; display:none; place-items:center; z-index:60 }
+    .lock .box{ background:#111; border:1px solid #333; padding:24px; border-radius:16px; text-align:center; max-width:380px }
+
+    /* تأثير انتقال عند النجاح */
+    .gate{ position:fixed; inset:0; pointer-events:none; z-index:40; display:none }
+    .ring{ position:absolute; inset:0; margin:auto; width:160vmax; height:160vmax; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.0) 40%, rgba(255,140,0,.28) 41%, rgba(0,168,107,.3) 43%, rgba(255,255,255,0) 46%); animation: boom .9s ease-out forwards }
+    @keyframes boom{ 0%{ transform:scale(.02); opacity:1 } 100%{ transform:scale(1.1); opacity:0 } }
+  </style>
 </head>
 <body>
 
-<div class="login-container">
-    <h2>تسجيل الدخول</h2>
-    <form id="loginForm">
-        <input type="text" id="username" placeholder="اسم المستخدم" required><br>
-        <input type="password" id="password" placeholder="كلمة المرور" required><br>
-        <button type="submit">دخول</button>
-    </form>
-    <div class="error" id="errorMsg"></div>
-    
-    <a class="whatsapp-link" href="https://wa.me/201010238579?text=أنا%20عاوز%20اشترك%20في%20الكورس" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
-        تواصل عبر واتساب للحصول على بيانات الدخول
-    </a>
-</div>
+  <!-- عناصر خلفية طايرة -->
+  <div class="floaty" aria-hidden="true">
+    <div class="blob g b1"></div>
+    <div class="blob o b2"></div>
+  </div>
 
-<!-- خلفية الأمواج -->
-<div class="waves">
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-</div>
+  <div class="toast" id="toast">🎉 يلا بينا!</div>
+  <div class="gate" id="gate"><div class="ring"></div></div>
 
-<script>
-    const users = [
-        { username: "1001", password: "pass123" },
-        { username: "1002", password: "alpha456" },
-        { username: "1003", password: "zxc789" },
-        { username: "1004", password: "moon2025" },
-        { username: "1005", password: "star999" },
-        { username: "1006", password: "light888" },
-        { username: "1007", password: "sunshine" },
-        { username: "1008", password: "secure777" },
-        { username: "1009", password: "blue202" },
-        { username: "1010", password: "night456" },
-        { username: "1011", password: "fire321" },
-        { username: "1012", password: "water789" },
-        { username: "1013", password: "earth654" },
-        { username: "1014", password: "wind333" },
-        { username: "1015", password: "shadow" },
-        { username: "1016", password: "cloud99" },
-        { username: "1017", password: "nova202" },
-        { username: "1018", password: "matrix11" },
-        { username: "1019", password: "tiger888" },
-        { username: "1020", password: "dragon77" }
+  <!-- شاشة قفل عند الطرد -->
+  <div class="lock" id="lock">
+    <div class="box">
+      <h2>🚫 تم إغلاق الجلسة</h2>
+      <p id="lockMsg">لقد تم تسجيل خروجك بسبب محاولة غير مسموح بها.</p>
+      <button class="btn ghost" onclick="returnToLogin()">عودة لتسجيل الدخول</button>
+    </div>
+  </div>
+
+  <!-- صفحة تسجيل الدخول -->
+  <main class="shell" id="login">
+    <section class="card" role="dialog" aria-labelledby="title">
+      <header class="card-head">
+        <h1 id="title">تسجيل الدخول إلى الكورس</h1>
+        <p>أهلاً بيك! أدخل بياناتك وابدأ التعلم ✨</p>
+        <div class="ribbons" aria-hidden="true">
+          <div class="rib"></div><div class="rib"></div><div class="rib"></div>
+        </div>
+      </header>
+      <div class="card-body">
+        <label class="label" for="u">اسم المستخدم</label>
+        <input class="input" id="u" autocomplete="username" inputmode="text" placeholder="مثال: dr2025001" />
+
+        <label class="label" for="p">كلمة المرور</label>
+        <input class="input" id="p" type="password" autocomplete="current-password" placeholder="••••••••" />
+
+        <div class="actions">
+          <button class="btn primary" id="loginBtn">دخول</button>
+          <button class="btn ghost" id="clearBtn" title="مسح المدخلات">مسح</button>
+        </div>
+        <div class="helper" id="err"></div>
+
+        <a class="whatsapp" href="https://wa.me/201010238579?text=%D8%A3%D9%86%D8%A7%20%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A7%D8%B4%D8%AA%D8%B1%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D9%83%D9%88%D8%B1%D8%B3" target="_blank" rel="noopener">
+          <img alt="واتساب" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"/> تواصل عبر واتساب للحصول على بيانات الدخول
+        </a>
+
+        <div class="admin-tools">
+          <button class="btn ghost" id="exportBtn" title="تحميل قائمة المستخدمين (CSV)">🔐 تحميل المستخدمين (CSV)</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- التطبيق بعد الدخول -->
+  <section id="app">
+    <header class="app-header">
+      <div class="wrap">
+        <div class="brand"><span class="dot"></span><span>منصة الكورس</span></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <strong id="who"></strong>
+          <button class="btn ghost logout" onclick="forceLogout('🚪 تم تسجيل الخروج')">تسجيل الخروج</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-content">
+      <div class="grid" id="videos"></div>
+    </div>
+  </section>
+
+  <script>
+    // ======================== إعدادات الفيديو ========================
+    // ضع حتى 10 لينكات (غير مدرج) من يوتيوب. استبدل النصوص "لينك ..." بروابط embed
+    const videoLinks = [
+      "https://www.youtube.com/embed/VX8EPEWJVq0", // لينك 1 (موجود فعلاً)
+      "لينك 2",
+      "لينك 3",
+      "لينك 4",
+      "لينك 5",
+      "لينك 6",
+      "لينك 7",
+      "لينك 8",
+      "لينك 9",
+      "لينك 10"
     ];
 
-    const form = document.getElementById("loginForm");
-    const errorMsg = document.getElementById("errorMsg");
+    // ======================== قائمة المستخدمين (نسختك) ========================
+    const users = [
+      {username: "dr2025001", password: "x7A9kP2"},
+      {username: "dr2025002", password: "Qw8rL1m"},
+      {username: "dr2025003", password: "tP3sV9z"},
+      {username: "dr2025004", password: "nH6yU7b"},
+      {username: "dr2025005", password: "Zp4dE8q"},
+      {username: "dr2025006", password: "bV7mQ2x"},
+      {username: "dr2025007", password: "yT8fW4n"},
+      {username: "dr2025008", password: "mK5rH3p"},
+      {username: "dr2025009", password: "L9sQ7zA"},
+      {username: "dr2025010", password: "vB2kN6t"},
+      {username: "dr2025011", password: "P8qR5tZ"},
+      {username: "dr2025012", password: "W3nH9lK"},
+      {username: "dr2025013", password: "F7cT2xM"},
+      {username: "dr2025014", password: "R4vY6pQ"},
+      {username: "dr2025015", password: "H9kS3bN"},
+      {username: "dr2025016", password: "T2mJ7wV"},
+      {username: "dr2025017", password: "K5yG8tL"},
+      {username: "dr2025018", password: "C8rB4hP"},
+      {username: "dr2025019", password: "N6vU9dX"},
+      {username: "dr2025020", password: "Z7sP3jM"},
+      {username: "dr2025021", password: "m4B8qK7"},
+      {username: "dr2025022", password: "t6R2zH9"},
+      {username: "dr2025023", password: "p7N5xJ3"},
+      {username: "dr2025024", password: "h9F4wG2"},
+      {username: "dr2025025", password: "k2L6mQ8"},
+      {username: "dr2025026", password: "y5C7nV4"},
+      {username: "dr2025027", password: "v8X3gP6"},
+      {username: "dr2025028", password: "z4M9tB7"},
+      {username: "dr2025029", password: "n7P2yH5"},
+      {username: "dr2025030", password: "q3W8rK9"},
+      {username: "dr2025031", password: "f5H6pZ8"},
+      {username: "dr2025032", password: "g9J2vN7"},
+      {username: "dr2025033", password: "x6R5cL3"},
+      {username: "dr2025034", password: "l7K9wB2"},
+      {username: "dr2025035", password: "b8T4yF6"},
+      {username: "dr2025036", password: "s3P7mQ8"},
+      {username: "dr2025037", password: "u4N6hV9"},
+      {username: "dr2025038", password: "e2W8tM5"},
+      {username: "dr2025039", password: "o9H7rX4"},
+      {username: "dr2025040", password: "a6Y3pK2"},
+      {username: "dr2025041", password: "j8C4nV7"},
+      {username: "dr2025042", password: "d5Q9wM3"},
+      {username: "dr2025043", password: "m7R6tH2"},
+      {username: "dr2025044", password: "k2V8gF5"},
+      {username: "dr2025045", password: "n4L7yP8"},
+      {username: "dr2025046", password: "p3X5mB9"},
+      {username: "dr2025047", password: "v8H6rT4"},
+      {username: "dr2025048", password: "c5G9wQ7"},
+      {username: "dr2025049", password: "t7J4nV6"},
+      {username: "dr2025050", password: "h9M2yK3"},
+      {username: "dr2025051", password: "x4B8qW6"},
+      {username: "dr2025052", password: "m7C5tN9"},
+      {username: "dr2025053", password: "y8P2gV3"},
+      {username: "dr2025054", password: "w6R9mQ4"},
+      {username: "dr2025055", password: "k5F3tL8"},
+      {username: "dr2025056", password: "j2P8nV7"},
+      {username: "dr2025057", password: "s4W9yH6"},
+      {username: "dr2025058", password: "u8L5mB3"},
+      {username: "dr2025059", password: "z6H7pK2"},
+      {username: "dr2025060", password: "p9V3rX8"},
+      {username: "dr2025061", password: "c7N8gQ4"},
+      {username: "dr2025062", password: "m4T2yH9"},
+      {username: "dr2025063", password: "f5K8nV7"},
+      {username: "dr2025064", password: "l9B6tQ2"},
+      {username: "dr2025065", password: "h3Y7pM8"},
+      {username: "dr2025066", password: "n8R4mK5"},
+      {username: "dr2025067", password: "v6P9gT3"},
+      {username: "dr2025068", password: "x2H5tQ7"},
+      {username: "dr2025069", password: "k4J8nV9"},
+      {username: "dr2025070", password: "w7M2yB5"},
+      {username: "dr2025071", password: "q9C4pK8"},
+      {username: "dr2025072", password: "z3L6nV2"},
+      {username: "dr2025073", password: "j5R8mH9"},
+      {username: "dr2025074", password: "p6F2yQ4"},
+      {username: "dr2025075", password: "t8N7gV3"},
+      {username: "dr2025076", password: "m2W9pK5"},
+      {username: "dr2025077", password: "c4B6tQ7"},
+      {username: "dr2025078", password: "n7H5yM8"},
+      {username: "dr2025079", password: "k3P9gV2"},
+      {username: "dr2025080", password: "w5L4mH9"},
+      {username: "dr2025081", password: "y8C7tQ6"},
+      {username: "dr2025082", password: "f6J2nV3"},
+      {username: "dr2025083", password: "p4H9mB7"},
+      {username: "dr2025084", password: "t7F6yQ2"},
+      {username: "dr2025085", password: "m9N3gV4"},
+      {username: "dr2025086", password: "c5K8pH7"},
+      {username: "dr2025087", password: "n4B2tQ6"},
+      {username: "dr2025088", password: "k8W7mV3"},
+      {username: "dr2025089", password: "w2P5yM9"},
+      {username: "dr2025090", password: "y3L6nQ4"},
+      {username: "dr2025091", password: "f9H7pK2"},
+      {username: "dr2025092", password: "p6C8gV5"},
+      {username: "dr2025093", password: "t4N2mB7"},
+      {username: "dr2025094", password: "m8F9yQ6"},
+      {username: "dr2025095", password: "c3J4tV2"},
+      {username: "dr2025096", password: "n6K7mH8"},
+      {username: "dr2025097", password: "k2B5pQ9"},
+      {username: "dr2025098", password: "w4L8yV3"},
+      {username: "dr2025099", password: "y7P9gM5"},
+      {username: "dr2025100", password: "f5R2tQ8"}
+    ];
 
-    form.addEventListener("submit", function(e) {
-        e.preventDefault();
+    // ======================== حالة الجلسة ========================
+    let currentUser = null;
 
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
+    const qs = (s,p=document)=>p.querySelector(s);
+    const qsa = (s,p=document)=>[...p.querySelectorAll(s)];
 
-        const userFound = users.find(user => user.username === username && user.password === password);
+    function showToast(msg){ const t=qs('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200); }
 
-        if (userFound) {
-            window.location.href = "course.html";
-        } else {
-            errorMsg.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-        }
+    function enterApp(){
+      // تأثير بوابة
+      const g = qs('#gate'); g.style.display='block'; g.firstElementChild.style.animation='none'; void g.firstElementChild.offsetWidth; g.firstElementChild.style.animation='boom .9s ease-out forwards';
+      setTimeout(()=>{ qs('#login').style.display='none'; const app=qs('#app'); app.style.display='block'; requestAnimationFrame(()=>{ app.style.opacity=1; }); showToast('🎉 يلا بينا!'); }, 120);
+    }
+
+    function renderVideos(){
+      const wrap = qs('#videos'); wrap.innerHTML='';
+      const onlyLinks = videoLinks.filter(v=> /^https?:\/\//i.test(v));
+      onlyLinks.forEach((src, idx)=>{
+        const card = document.createElement('article'); card.className='vcard col';
+        card.innerHTML = `
+          <div class="vhead"><span>🎬 الفيديو ${idx+1}</span><span style="color:var(--orange);font-weight:800">محمي</span></div>
+          <div class="vplayer">
+            <div class="wm-tiles" style="background-image: ${JSON.stringify(`repeating-linear-gradient( 45deg, transparent 0 160px, rgba(0,0,0,.9) 160px 161px ), repeating-linear-gradient( -45deg, transparent 0 160px, rgba(0,0,0,.9) 160px 161px )`) }"></div>
+            <div class="wm"><span class="tag" id="wm-${idx}">${currentUser} — محمي</span></div>
+            <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen src="${src}?rel=0&modestbranding=1&iv_load_policy=3&fs=1&controls=1&disablekb=0"></iframe>
+          </div>`;
+        wrap.appendChild(card);
+      });
+    }
+
+    function validate(u,p){ return users.some(x=> x.username===u && x.password===p ); }
+
+    function forceLogout(msg){
+      currentUser=null; // امسح المستخدم
+      qs('#who').textContent='';
+      qs('#app').style.display='none';
+      qs('#login').style.display='grid';
+      qs('#u').value=''; qs('#p').value='';
+      const lock = qs('#lock'); qs('#lockMsg').textContent = msg || 'تم إنهاء الجلسة.'; lock.style.display='grid';
+      setTimeout(()=> lock.style.display='none', 2100);
+    }
+    function returnToLogin(){ qs('#lock').style.display='none'; }
+
+    // تسجيل الدخول
+    qs('#loginBtn').addEventListener('click', ()=>{
+      const u = qs('#u').value.trim();
+      const p = qs('#p').value.trim();
+      if(!u || !p){ qs('#err').textContent='من فضلك أدخل البيانات كاملة'; return; }
+      // صيغة dr2025###
+      if(!/^dr2025\d{3}$/i.test(u)){ qs('#err').textContent='صيغة اسم المستخدم يجب أن تكون مثل: dr2025001'; return; }
+      if(!validate(u,p)){ qs('#err').textContent='❌ اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
+      qs('#err').textContent='';
+      currentUser = u; qs('#who').textContent = `مرحبًا، ${u}`;
+      enterApp();
+      renderVideos();
     });
-</script>
 
+    qs('#clearBtn').addEventListener('click', ()=>{ qs('#u').value=''; qs('#p').value=''; qs('#err').textContent=''; });
+
+    // تحميل قائمة المستخدمين CSV (مع PIN بسيط)
+    qs('#exportBtn').addEventListener('click', ()=>{
+      const pin = prompt('أدخل PIN الإدارة (افتراضي: 2025)');
+      if(pin !== '2025'){ alert('PIN غير صحيح'); return; }
+      const rows = [['username','password'], ...users.map(u=>[u.username,u.password])];
+      const csv = rows.map(r=> r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'users-dr2025.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+
+    // ======================== حماية متقدمة (قدر الإمكان بالمتصفح) ========================
+    const ANGRY = '😡 محاولة غير مسموح بها — تم تسجيل خروجك.';
+
+    // منع القائمة اليمنى (خارج iframe لن نقدر داخل اليوتيوب)
+    document.addEventListener('contextmenu', (e)=>{
+      e.preventDefault();
+      if(currentUser) forceLogout(ANGRY + '\n(كليك يمين)');
+      return false;
+    });
+
+    // منع السحب والإفلات
+    document.addEventListener('dragstart', e=> e.preventDefault());
+
+    // منع اختصارات شائعة (نسخ/حفظ/عرض المصدر/DevTools/طباعة)
+    document.addEventListener('keydown', (e)=>{
+      const k = e.key; const ctrl = e.ctrlKey||e.metaKey; const sh=e.shiftKey;
+      if (
+        (ctrl && ['c','s','u','p','x','a'].includes(k.toLowerCase())) ||
+        (ctrl && sh && ['i','j','c'].includes(k.toLowerCase())) ||
+        k === 'F12'
+      ){
+        e.preventDefault(); e.stopPropagation();
+        if(currentUser) forceLogout(ANGRY + `\n(مفتاح ${k})`);
+      }
+    }, true);
+
+    // محاولة إلتفاف عبر أمر الطباعة
+    window.onbeforeprint = ()=>{ if(currentUser) forceLogout(ANGRY + ' (طباعة)') };
+
+    // كشف فتح أدوات المطور بالقياس (تقريبي)
+    let devCheck = setInterval(()=>{
+      const threshold = 160; // فرق كبير يدل غالبًا على devtools
+      if ((window.outerWidth - window.innerWidth) > threshold || (window.outerHeight - window.innerHeight) > threshold){
+        if(currentUser) forceLogout(ANGRY + ' (DevTools)');
+      }
+    }, 1000);
+
+    // تعطيل النسخ والقص واللصق على مستوى الوثيقة
+    ['copy','cut','paste'].forEach(ev=> document.addEventListener(ev, (e)=>{ e.preventDefault(); if(currentUser) forceLogout(ANGRY + ` (${ev})`); }));
+    // ملاحظة: لا نقوم بالطرد عند النقر على الفيديو — علشان ما يعطلش المشاهدة.
+  </script>
 </body>
 </html>
