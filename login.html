@@ -395,8 +395,8 @@
 
     // تحميل قائمة المستخدمين CSV (مع PIN بسيط)
     qs('#exportBtn').addEventListener('click', ()=>{
-      const pin = prompt('أدخل PIN الإدارة (افتراضي: 2025)');
-      if(pin !== '2025'){ alert('PIN غير صحيح'); return; }
+      const pin = prompt('أدخل PIN الإدارة (افتراضي: 0000)');
+      if(pin !== '7amo'){ alert('PIN غير صحيح'); return; }
       const rows = [['username','password'], ...users.map(u=>[u.username,u.password])];
       const csv = rows.map(r=> r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(',')).join('\n');
       const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
